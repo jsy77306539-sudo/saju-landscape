@@ -1,0 +1,8 @@
+Third-party notice
+
+This web app loads lunar-javascript 1.7.7 from jsDelivr CDN.
+Project: https://github.com/6tail/lunar-javascript
+License: MIT
+
+The application-specific Korean interpretation text, UI, and rule-based landscape explanations
+in index.html were created for this prototype.

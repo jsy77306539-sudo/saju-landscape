@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="사주팔자를 풍경과 풍부한 해설로 읽는 사주풍경 웹앱" />
+<title>사주풍경 · 명식과 삶의 흐름 읽기</title>
+<style>
+:root{
+  --bg:#eef1ec; --paper:#fffdf8; --paper2:#f6f2e9; --ink:#27332f;
+  --muted:#6f7974; --line:#ddd5c8; --accent:#536d5c; --accent2:#8a6c52;
+  --wood:#6e8f64; --fire:#ce795e; --earth:#a58560; --metal:#91999f; --water:#6f91a8;
+  --shadow:0 16px 46px rgba(39,51,47,.075);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--ink);
+  font-family:"Pretendard","Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(255,255,255,.75),transparent 33%),
+    linear-gradient(180deg,#f4efe6,var(--bg));
+}
+button,input,select{font:inherit}
+.wrap{max-width:1180px;margin:auto;padding:30px 18px 78px}
+.hero,.section{
+  background:rgba(255,253,248,.97);border:1px solid var(--line);
+  border-radius:24px;box-shadow:var(--shadow)
+}
+.hero{padding:32px}.section{margin-top:22px;padding:26px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.13em;color:var(--accent);text-transform:uppercase}
+h1{font-size:36px;letter-spacing:-1.4px;margin:6px 0 8px}
+h2{font-size:22px;letter-spacing:-.45px;margin:0 0 17px}
+h3{font-size:17px;margin:0 0 8px}
+p{margin:0 0 12px;line-height:1.82}
+.muted{color:var(--muted)} .small{font-size:12px;color:var(--muted)}
+.input-grid{display:grid;grid-template-columns:1.25fr 1fr 1.25fr .8fr .8fr;gap:10px;margin-top:23px}
+.sub-grid{display:grid;grid-template-columns:1.4fr .8fr .8fr 1.05fr;gap:10px;margin-top:10px}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px 2px}
+input,select{
+  width:100%;min-height:45px;border:1px solid var(--line);background:#fff;color:var(--ink);
+  border-radius:12px;padding:10px 12px;outline:none
+}
+input:focus,select:focus{border-color:#91a396;box-shadow:0 0 0 3px rgba(83,109,92,.08)}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:17px}
+button{
+  border:0;border-radius:12px;background:var(--ink);color:white;padding:12px 17px;font-weight:750;cursor:pointer
+}
+button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+button:hover{filter:brightness(.98)}
+.notice{
+  margin-top:16px;padding:13px 15px;border-radius:13px;background:#f7f3eb;border:1px solid #e5ddcf;
+  line-height:1.7;font-size:13px
+}
+.status{margin-top:11px;font-size:13px;color:var(--muted)}
+.error{background:#fff0eb;border:1px solid #e6b6a5;color:#7a3f2d;padding:13px 15px;border-radius:13px;margin-top:16px}
+.hidden{display:none!important}
+
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.pillar{border:1px solid var(--line);border-radius:17px;padding:17px;text-align:center;background:#fff}
+.pillar .role{font-size:12px;color:var(--muted);margin-bottom:8px}
+.pillar .gz{font-size:42px;font-weight:800;line-height:1.05;letter-spacing:.03em}
+.pillar .meta{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.55}
+.pillar .gods{font-size:12px;margin-top:7px;background:#f5f3ed;border-radius:9px;padding:7px}
+
+.overview{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+.scene-card{background:#faf7f1;border:1px solid var(--line);border-radius:18px;padding:15px;position:sticky;top:16px}
+.scene{height:390px;position:relative;overflow:hidden;border-radius:15px;border:1px solid #c9c1b6;
+  background:linear-gradient(#aebdc3 0 37%,#c9c1ad 37% 55%,#94846c 55% 100%)}
+.scene .mist{position:absolute;top:30%;left:0;right:0;height:35px;background:rgba(255,255,255,.18);filter:blur(7px)}
+.scene .rain{position:absolute;inset:0 0 44% 0;opacity:0;
+ background-image:repeating-linear-gradient(103deg,transparent 0 23px,rgba(247,252,255,.7) 24px 25px)}
+.scene .sun{position:absolute;width:64px;height:64px;border-radius:50%;right:11%;top:11%;background:#e4bd70;opacity:0}
+.scene .tree-big{position:absolute;left:12%;bottom:94px;width:22px;height:178px;border-radius:9px;background:#625344;opacity:.15}
+.scene .tree-big:before,.scene .tree-big:after,.scene .tree-small:before,.scene .tree-small:after{
+ content:"";position:absolute;border-radius:50%;background:#6c8c61}
+.scene .tree-big:before{width:128px;height:100px;left:-54px;top:-42px}
+.scene .tree-big:after{width:100px;height:83px;left:-10px;top:-22px;background:#78976d}
+.scene .tree-small{position:absolute;left:48%;bottom:105px;width:11px;height:116px;border-radius:7px;background:#6b5948}
+.scene .tree-small:before{width:80px;height:61px;left:-38px;top:-25px}
+.scene .tree-small:after{width:60px;height:52px;left:-1px;top:-9px;background:#82a076}
+.scene .earth{position:absolute;left:30%;right:0;bottom:0;height:105px;background:linear-gradient(#a08361,#775f4d);opacity:.35;border-radius:44% 0 0 0/23% 0 0 0}
+.scene .metal{position:absolute;right:12%;bottom:120px;width:112px;height:88px;opacity:.15}
+.scene .metal i{position:absolute;bottom:0;display:block;background:linear-gradient(#d2d8dc,#8c969c);
+ clip-path:polygon(50% 0,100% 36%,78% 100%,22% 100%,0 36%)}
+.scene .metal i:nth-child(1){left:0;width:33px;height:65px;transform:rotate(-7deg)}
+.scene .metal i:nth-child(2){left:29px;width:42px;height:88px}
+.scene .metal i:nth-child(3){left:68px;width:29px;height:58px;transform:rotate(8deg)}
+.scene-caption{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px}
+.reading{background:var(--paper2);border-radius:18px;padding:22px;font-size:16.5px;line-height:1.95}
+.reading p:last-child{margin-bottom:0}
+.keyline{font-size:19px;font-weight:800;line-height:1.7;margin-bottom:12px}
+
+.element-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.el-card{border:1px solid var(--line);border-radius:15px;padding:15px;background:#fff}
+.el-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.el-name{font-weight:850}.el-count{font-weight:850;font-size:20px}
+.bar{height:7px;border-radius:10px;background:#eeeae1;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:10px}
+.el-note{font-size:12px;line-height:1.6;color:var(--muted);margin-top:8px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;line-height:1.75}
+.card strong{display:block;margin-bottom:5px}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 9px;font-size:12px;margin:3px}
+.relation{border-left:4px solid var(--accent);padding:12px 14px;background:#f3f6f2;border-radius:10px;margin:9px 0;line-height:1.72}
+.relation.warn{border-left-color:var(--accent2);background:#f8f3ed}
+.ten-table{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ten-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px}
+.ten-name{font-size:17px;font-weight:850}.ten-key{font-size:12px;color:var(--muted);margin:4px 0 8px}
+.ten-count{float:right;background:#eef2ed;border-radius:999px;padding:2px 7px;font-size:11px}
+
+.dayun-list{display:grid;gap:12px}
+.dayun{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.dayun.current{border:2px solid var(--accent);box-shadow:0 9px 26px rgba(83,109,92,.10)}
+.dy-head{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:11px}
+.dy-gz{font-size:24px;font-weight:850}.dy-years{font-size:13px;color:var(--muted)}
+.current-badge{font-size:11px;color:#fff;background:var(--accent);padding:4px 7px;border-radius:999px}
+.dy-cols{display:grid;grid-template-columns:1.15fr 1fr;gap:15px}
+.direction{background:var(--paper2);border-radius:13px;padding:14px;line-height:1.75}
+.practice{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.practice .card{background:var(--paper2)}
+.source-note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px}
+footer{padding:24px 3px 0;color:var(--muted);font-size:11px;line-height:1.7}
+
+@media(max-width:980px){
+  .input-grid,.sub-grid,.pillars,.element-grid,.ten-table,.grid3,.dy-cols{grid-template-columns:1fr 1fr}
+  .overview{grid-template-columns:300px 1fr}
+}
+@media(max-width:760px){
+  .overview{grid-template-columns:1fr}.scene-card{position:static}
+}
+@media(max-width:560px){
+  .input-grid,.sub-grid,.pillars,.element-grid,.ten-table,.grid2,.grid3,.dy-cols,.practice{grid-template-columns:1fr}
+  h1{font-size:29px}.hero,.section{padding:20px}.pillar .gz{font-size:36px}
+}
+@media print{
+  body{background:white}.hero,.section{box-shadow:none}.actions,.notice,.status{display:none!important}
+  .scene-card{position:static}
+}
+
+/* Narrative edition 2.1 */
+.mode-switch{display:inline-flex;gap:4px;margin-top:20px;padding:4px;background:#ece8df;border-radius:13px}
+.mode-btn{margin:0;padding:8px 12px;background:transparent;color:var(--muted);border-radius:9px;font-size:13px}
+.mode-btn.active{background:#fff;color:var(--ink);box-shadow:0 2px 9px rgba(39,51,47,.08)}
+.manual-panel{margin-top:14px;padding:17px;background:#f7f3ea;border:1px solid var(--line);border-radius:16px}
+.manual-title{font-size:14px;font-weight:800;margin-bottom:11px}.manual-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.manual-grid input{text-align:center;font-size:20px;font-weight:800;letter-spacing:.1em}.manual-note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.birth-meta-title{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.08em;margin-top:19px;margin-bottom:-14px}
+.section-kicker{font-size:10px;letter-spacing:.18em;font-weight:900;color:#809086;margin-bottom:6px}
+.compact-section{padding-bottom:22px}.prose-section{padding:30px 34px}.long-reading{max-width:900px;font-size:16.5px;line-height:2.02}
+.long-reading p{margin:0 0 18px}.long-reading strong{font-weight:850}.opening-scene{font-size:19px;line-height:1.95;font-weight:650;margin-bottom:22px;color:#2e3a35}
+.signature-line{margin-top:23px;padding:20px 22px;border-left:4px solid var(--accent);background:#f1f4ef;border-radius:0 14px 14px 0;font-size:19px;font-weight:800;line-height:1.8}
+.story-stack{display:grid;gap:0;max-width:920px}.story-chapter{padding:23px 0;border-top:1px solid var(--line)}.story-chapter:first-child{border-top:0;padding-top:2px}
+.story-title{font-size:19px;font-weight:850;margin-bottom:10px;letter-spacing:-.25px}.story-body{font-size:16px;line-height:1.95}.story-body p{margin:0 0 13px}
+.element-facts{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0 12px}.element-fact{border:1px solid var(--line);border-radius:999px;background:#fff;padding:6px 10px;font-size:12px}
+.context-note{margin-top:17px;padding:14px 16px;background:#f6f3ec;border-radius:12px;border:1px solid #e6ded1;line-height:1.75;font-size:13px;color:#56605b}
+.hidden-stem-line{margin-top:17px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.8}
+.life-stack{display:grid;gap:0;max-width:920px}.life-chapter{padding:21px 0;border-top:1px solid var(--line)}.life-chapter:first-child{border-top:0}.life-chapter h3{font-size:18px;margin-bottom:9px}.life-chapter p{font-size:16px;line-height:1.92}
+.narrative-dayun .dayun{padding:24px 25px}.dy-theme{font-size:18px;font-weight:850;line-height:1.6;margin:3px 0 14px;color:#32433a}.dy-prose{font-size:15.5px;line-height:1.9}.dy-prose p{margin:0 0 12px}
+.direction{margin-top:14px;background:#f3f5f1;border-left:3px solid var(--accent);border-radius:0 11px 11px 0;padding:14px 16px;font-size:14.5px;line-height:1.82}
+.ending-section{background:#2f3b36;color:#f7f4ed;border-color:#2f3b36}.ending-section .section-kicker{color:#b9c6bd}.ending-section h2{color:#f7f4ed}.final-line{max-width:920px;font-size:23px;font-weight:760;line-height:1.75;letter-spacing:-.3px}
+#elementGrid,#tenGodSummary,.overview,.scene-card,.practice{display:none!important}
+@media(max-width:760px){.prose-section{padding:23px 20px}.manual-grid{grid-template-columns:1fr 1fr}.opening-scene{font-size:17px}.signature-line{font-size:17px}.final-line{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">SAJU LANDSCAPE · NARRATIVE 2.2</div>
+    <h1>사주풍경</h1>
+    <p class="muted">명리의 글자를 하나의 풍경으로 연결한 뒤, 그 풍경이 생각·일·관계·삶의 방향에서 어떻게 나타나는지 한 편의 글처럼 읽습니다.</p>
+
+    <div class="mode-switch" aria-label="입력 방식 선택">
+      <button type="button" class="mode-btn active" data-mode="birth">생년월일로 계산</button>
+      <button type="button" class="mode-btn" data-mode="manual">명식 직접 입력</button>
+    </div>
+
+    <div id="manualPanel" class="manual-panel hidden">
+      <div class="manual-title">확인한 명식을 그대로 읽고 싶다면</div>
+      <div class="manual-grid">
+        <div><label for="manualYear">연주</label><input id="manualYear" value="갑인" maxlength="4" placeholder="갑인 또는 甲寅" /></div>
+        <div><label for="manualMonth">월주</label><input id="manualMonth" value="계유" maxlength="4" placeholder="계유 또는 癸酉" /></div>
+        <div><label for="manualDay">일주</label><input id="manualDay" value="을축" maxlength="4" placeholder="을축 또는 乙丑" /></div>
+        <div><label for="manualTime">시주</label><input id="manualTime" value="계미" maxlength="4" placeholder="계미 또는 癸未" /></div>
+      </div>
+      <p class="manual-note">한글과 한자를 모두 인식합니다. 예: <b>갑인 · 계유 · 을축 · 계미</b> 또는 <b>甲寅 · 癸酉 · 乙丑 · 癸未</b>. 아래 생년월일·성별 정보는 대운의 방향과 시작 시점을 계산할 때 사용합니다.</p>
+    </div>
+
+    <div class="birth-meta-title" id="birthMetaTitle">출생 정보</div>
+
+    <div class="input-grid">
+      <div>
+        <label for="birthDate">생년월일</label>
+        <input id="birthDate" type="date" value="1974-09-21" />
+      </div>
+      <div>
+        <label for="birthTime">출생시간</label>
+        <input id="birthTime" type="time" value="17:00" />
+      </div>
+      <div>
+        <label for="birthPlace">출생지</label>
+        <input id="birthPlace" list="cities" value="통영" autocomplete="off" />
+        <datalist id="cities">
+          <option value="서울"><option value="부산"><option value="대구"><option value="인천">
+          <option value="광주"><option value="대전"><option value="울산"><option value="세종">
+          <option value="수원"><option value="춘천"><option value="강릉"><option value="청주">
+          <option value="전주"><option value="목포"><option value="여수"><option value="포항">
+          <option value="창원"><option value="진주"><option value="통영"><option value="김해">
+          <option value="남해"><option value="제주"><option value="서귀포">
+        </datalist>
+      </div>
+      <div>
+        <label for="calendarType">달력</label>
+        <select id="calendarType">
+          <option value="solar">양력</option>
+          <option value="lunar">음력</option>
+        </select>
+      </div>
+      <div>
+        <label for="gender">성별</label>
+        <select id="gender">
+          <option value="female">여성</option>
+          <option value="male">남성</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sub-grid">
+      <div>
+        <label for="timeBasis">출생시각 기준</label>
+        <select id="timeBasis">
+          <option value="true" selected>진태양시 보정 · 한국 출생 권장</option>
+          <option value="standard">입력한 표준시 그대로</option>
+        </select>
+      </div>
+      <div>
+        <label for="longitude">출생지 경도(동경)</label>
+        <input id="longitude" type="number" step="0.001" value="128.433" />
+      </div>
+      <div id="leapWrap" class="hidden">
+        <label for="isLeap">윤달 여부</label>
+        <select id="isLeap"><option value="no">평달</option><option value="yes">윤달</option></select>
+      </div>
+      <div>
+        <label for="dayunConvention">대운 표시 기준</label>
+        <select id="dayunConvention">
+          <option value="daeunsu" selected>대운수 중심 · 4세, 14세, 24세…</option>
+          <option value="exact">정밀 교운일 중심</option>
+          <option value="counting">세는나이 연도 환산 · 만세력 비교용</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="small" style="margin-top:10px">
+      대운은 기본적으로 <b>대운수</b>로 읽습니다. 예를 들어 대운수 4라면 4·14·24·34·44·54세…가 대운 교체 나이입니다.
+      연도는 만세력의 나이 표기법이나 정밀 교운 계산 방식에 따라 다르게 보일 수 있습니다.
+    </p>
+    <div class="actions">
+      <button id="analyzeBtn">내 사주풍경 읽기</button>
+      <button class="secondary" onclick="window.print()">결과 인쇄 / PDF 저장</button>
+    </div>
+
+    <div class="notice">
+      <b>읽는 방식:</b> 명리 용어를 문장 조각처럼 붙이지 않습니다. 먼저 원국 전체를 하나의 장면으로 상상하고,
+      그 장면의 상징을 오행·십신·합충·삶의 패턴·대운까지 자연스럽게 이어서 설명합니다.
+      진태양시 보정은 대한민국 출생 1961년 이후를 우선 지원합니다.
+    </div>
+    <div id="status" class="status">계산 엔진을 불러오는 중입니다…</div>
+    <div id="errorBox" class="error hidden"></div>
+  </header>
+
+  <main id="results" class="hidden">
+    <section class="section compact-section">
+      <div class="section-kicker">命式</div>
+      <h2>1. 이 사주를 이루는 네 자리</h2>
+      <div id="pillars" class="pillars"></div>
+      <p id="timeCorrection" class="source-note"></p>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">LANDSCAPE</div>
+      <h2>2. 먼저, 한 장면으로 읽습니다</h2>
+      <div id="landscapeReading" class="long-reading"></div>
+      <div id="signatureLine" class="signature-line"></div>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">FOUR PILLARS</div>
+      <h2>3. 네 기둥을 한 편의 이야기로 이어 보면</h2>
+      <div id="pillarStories" class="story-stack"></div>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">FIVE ELEMENTS</div>
+      <h2>4. 오행은 ‘몇 개’보다 ‘어떻게 흐르는가’가 중요합니다</h2>
+      <div id="elementNarrative" class="long-reading"></div>
+      <div id="elementFacts" class="element-facts"></div>
+      <div id="seasonReading" class="context-note"></div>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">TEN GODS</div>
+      <h2>5. 십신은 내 안에서 어떤 방식으로 작동하는가</h2>
+      <div id="tenGodNarrative" class="long-reading"></div>
+      <div id="hiddenStems" class="hidden-stem-line"></div>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">RELATIONSHIPS</div>
+      <h2>6. 합과 충은 ‘좋고 나쁨’이 아니라 내부의 긴장과 연결입니다</h2>
+      <div id="relations" class="story-stack"></div>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">LIFE TRANSLATION</div>
+      <h2>7. 이 풍경이 실제 삶에서는 어떻게 나타날까</h2>
+      <div id="lifeReading" class="life-stack"></div>
+    </section>
+
+    <section class="section prose-section">
+      <div class="section-kicker">DAEUN</div>
+      <h2>8. 대운은 풍경에 무엇을 더하고, 무엇을 흔드는가</h2>
+      <div id="yunInfo" class="context-note"></div>
+      <div id="dayunList" class="dayun-list narrative-dayun"></div>
+    </section>
+
+    <section class="section ending-section">
+      <div class="section-kicker">ONE SENTENCE</div>
+      <h2>9. 이 사주에 한 문장만 남긴다면</h2>
+      <div id="finalLine" class="final-line"></div>
+    </section>
+  </main>
+
+  <footer>
+    계산 엔진: lunar-javascript 1.7.7 (MIT License) · 브라우저에서 계산하며 입력한 생년월일을 별도 서버로 전송하지 않습니다.
+    해설은 전통 명리의 상징 체계를 현대적인 자기이해의 언어로 재구성한 참고용 글입니다. 결과는 사건을 단정하는 예언이 아니라 자신의 패턴과 선택을 돌아보는 자료로 사용해 주세요.
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
+<script>
+(() => {
+"use strict";
+
+const $ = id => document.getElementById(id);
+const GAN = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const ZHI = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const GAN_KO = {甲:"갑",乙:"을",丙:"병",丁:"정",戊:"무",己:"기",庚:"경",辛:"신",壬:"임",癸:"계"};
+const ZHI_KO = {子:"자",丑:"축",寅:"인",卯:"묘",辰:"진",巳:"사",午:"오",未:"미",申:"신",酉:"유",戌:"술",亥:"해"};
+const ELEM = {
+  甲:"목",乙:"목",丙:"화",丁:"화",戊:"토",己:"토",庚:"금",辛:"금",壬:"수",癸:"수",
+  子:"수",丑:"토",寅:"목",卯:"목",辰:"토",巳:"화",午:"화",未:"토",申:"금",酉:"금",戌:"토",亥:"수"
+};
+const POL = {甲:1,乙:0,丙:1,丁:0,戊:1,己:0,庚:1,辛:0,壬:1,癸:0};
+const GEN = {목:"화",화:"토",토:"금",금:"수",수:"목"};
+const CTRL = {목:"토",토:"수",수:"화",화:"금",금:"목"};
+const HIDDEN = {
+  子:["癸"], 丑:["己","癸","辛"], 寅:["甲","丙","戊"], 卯:["乙"],
+  辰:["戊","乙","癸"], 巳:["丙","戊","庚"], 午:["丁","己"], 未:["己","丁","乙"],
+  申:["庚","壬","戊"], 酉:["辛"], 戌:["戊","辛","丁"], 亥:["壬","甲"]
+};
+const ELEM_META = {
+  목:{color:"var(--wood)", title:"성장·기획·관계망", text:"방향을 만들고 뻗어 가는 힘입니다. 삶에서는 기획, 성장, 관계, 배움의 확장으로 나타납니다."},
+  화:{color:"var(--fire)", title:"표현·발산·가시화", text:"안에 있는 것을 밖으로 드러내는 힘입니다. 말하기, 가르치기, 창작, 실행의 가시화와 연결됩니다."},
+  토:{color:"var(--earth)", title:"현실·관리·축적", text:"흐르는 것을 붙잡아 형태로 만드는 힘입니다. 자원, 생활기반, 관리, 결과물, 지속성과 연결됩니다."},
+  금:{color:"var(--metal)", title:"기준·정리·책임", text:"경계를 세우고 다듬는 힘입니다. 제도, 평가, 규칙, 책임, 선택과 정리의 기능으로 나타납니다."},
+  수:{color:"var(--water)", title:"관찰·정보·내적 자원", text:"스며들고 연결하고 저장하는 힘입니다. 공부, 관찰, 정보, 기억, 해석과 내면의 자원으로 나타납니다."}
+};
+const STEM_IMG = {
+  甲:"큰 나무처럼 곧게 서서 방향을 만드는 기운",
+  乙:"풀과 덩굴, 작은 나무처럼 주변을 읽으며 유연하게 자라는 기운",
+  丙:"해가 넓게 비추듯 밖으로 드러내고 확산하는 기운",
+  丁:"등불처럼 필요한 곳을 섬세하게 밝히는 기운",
+  戊:"큰 산과 대지처럼 버티고 받쳐 주는 기운",
+  己:"밭과 정원 흙처럼 돌보고 다듬어 결실을 만드는 기운",
+  庚:"원석과 큰 쇠처럼 자르고 개척하며 결단하는 기운",
+  辛:"보석과 세공된 금속처럼 정밀하게 다듬고 구별하는 기운",
+  壬:"큰 강과 바다처럼 넓게 흐르고 연결하는 기운",
+  癸:"비와 이슬처럼 조용히 스며들어 적시는 기운"
+};
+const BRANCH_IMG = {
+  子:"한겨울의 깊은 물", 丑:"차갑고 습한 늦겨울의 흙", 寅:"새봄이 시작되는 숲과 새싹",
+  卯:"봄 한가운데의 부드러운 풀과 가지", 辰:"봄비를 머금고 움직이기 시작하는 흙",
+  巳:"초여름의 열기와 빠른 움직임", 午:"한낮의 강한 햇빛과 뜨거운 기운",
+  未:"따뜻하고 마른 늦여름의 흙", 申:"초가을의 단단한 금속과 움직이는 기운",
+  酉:"늦가을의 서늘하고 정제된 금속성 공기", 戌:"마르고 단단해지는 늦가을의 흙",
+  亥:"겨울 초입의 넓고 깊은 물"
+};
+const SEASON = {
+  寅:["초봄","목"],卯:["봄 한가운데","목"],辰:["늦봄","토"],
+  巳:["초여름","화"],午:["여름 한가운데","화"],未:["늦여름","토"],
+  申:["초가을","금"],酉:["가을 한가운데","금"],戌:["늦가을","토"],
+  亥:["초겨울","수"],子:["겨울 한가운데","수"],丑:["늦겨울","토"]
+};
+const CITY_LONGITUDE = {
+  "서울":126.978,"부산":129.075,"대구":128.601,"인천":126.705,"광주":126.852,"대전":127.385,
+  "울산":129.311,"세종":127.289,"수원":127.029,"춘천":127.730,"강릉":128.876,"청주":127.489,
+  "전주":127.148,"목포":126.392,"여수":127.662,"포항":129.366,"창원":128.681,"진주":128.108,
+  "통영":128.433,"김해":128.889,"남해":127.893,"제주":126.531,"서귀포":126.560
+};
+const TEN_PROFILE = {
+  "비견":{key:"자기 기준·동료·지속", strength:"자기 방식과 꾸준함을 세우는 힘", risk:"혼자 버티거나 고집으로 굳어질 수 있음", action:"내 기준은 지키되 역할과 자원을 나누기"},
+  "겁재":{key:"독립·경쟁·연대", strength:"스스로 움직이고 사람을 끌어 모으는 힘", risk:"과도한 경쟁, 떠맡기, 자원 분산", action:"모든 일을 혼자 책임지지 말고 협업의 경계를 정하기"},
+  "식신":{key:"표현·생산·돌봄", strength:"알고 있는 것을 말·글·수업·결과물로 만드는 힘", risk:"편안함에 머물거나 일이 지나치게 늘어질 수 있음", action:"작은 결과물을 자주 완성해 밖으로 내보내기"},
+  "상관":{key:"창의·비판·혁신", strength:"기존 방식을 새롭게 보고 개선하는 힘", risk:"기준·권위와 마찰하거나 말이 앞설 수 있음", action:"비판보다 대안을 만들고 결과로 설득하기"},
+  "편재":{key:"운영·기회·자원", strength:"여러 일과 사람, 자원을 동시에 움직이는 현실감", risk:"일을 너무 넓히고 소진되기 쉬움", action:"기회보다 우선순위를 정하고 관리 가능한 범위를 지키기"},
+  "정재":{key:"축적·관리·안정", strength:"꾸준히 성과와 생활 기반을 쌓는 힘", risk:"안정에 매여 변화가 늦어질 수 있음", action:"경험을 기록·자산·시스템처럼 남는 형태로 바꾸기"},
+  "편관":{key:"압력·결단·도전", strength:"어려운 과제와 책임을 감당하며 실행하는 힘", risk:"자기압박, 과로, 지나친 긴장", action:"압박을 견디는 대신 기준과 절차를 만들어 통제하기"},
+  "정관":{key:"역할·질서·신뢰", strength:"제도 안에서 책임을 다하고 신뢰를 쌓는 힘", risk:"남의 기준에 지나치게 맞추거나 융통성이 줄어듦", action:"역할을 수행하되 내 전문성과 판단 기준을 함께 세우기"},
+  "편인":{key:"탐구·직관·재해석", strength:"낯선 것을 깊이 파고 자기 방식으로 이해하는 힘", risk:"생각이 많아 실행이 늦거나 혼자 안으로 파고들 수 있음", action:"탐구한 것을 일정한 주기로 밖에 설명하고 검증하기"},
+  "정인":{key:"학습·보호·축적", strength:"지식과 경험을 차분히 흡수하고 체계화하는 힘", risk:"준비가 충분해질 때까지 시작을 미룰 수 있음", action:"배운 것을 바로 적용하고 가르치며 자기 지식으로 만들기"}
+};
+
+const HEAVEN_COMB = {"甲己":"합","乙庚":"합","丙辛":"합","丁壬":"합","戊癸":"합"};
+const BRANCH_LIUHE = new Set(["子丑","寅亥","卯戌","辰酉","巳申","午未"]);
+const BRANCH_CHONG = new Set(["子午","丑未","寅申","卯酉","辰戌","巳亥"]);
+const BRANCH_HAI = new Set(["子未","丑午","寅巳","卯辰","申亥","酉戌"]);
+const BRANCH_PO = new Set(["子酉","卯午","辰丑","未戌","寅亥","巳申"]);
+const SANHE = [
+  {set:["申","子","辰"], elem:"수"}, {set:["亥","卯","未"], elem:"목"},
+  {set:["寅","午","戌"], elem:"화"}, {set:["巳","酉","丑"], elem:"금"}
+];
+const BANGHE = [
+  {set:["寅","卯","辰"], elem:"목"}, {set:["巳","午","未"], elem:"화"},
+  {set:["申","酉","戌"], elem:"금"}, {set:["亥","子","丑"], elem:"수"}
+];
+
+function koGz(gz){ return GAN_KO[gz[0]] + ZHI_KO[gz[1]]; }
+function pairKey(a,b){ return [a,b].sort((x,y)=>ZHI.indexOf(x)-ZHI.indexOf(y)).join(""); }
+function unorderedHas(set,a,b){ return set.has(a+b) || set.has(b+a); }
+
+function tenGod(dayGan, otherGan){
+  if(dayGan===otherGan) return "비견";
+  const dE=ELEM[dayGan], oE=ELEM[otherGan], same=POL[dayGan]===POL[otherGan];
+  if(dE===oE) return same ? "비견" : "겁재";
+  if(GEN[dE]===oE) return same ? "식신" : "상관";
+  if(CTRL[dE]===oE) return same ? "편재" : "정재";
+  if(CTRL[oE]===dE) return same ? "편관" : "정관";
+  if(GEN[oE]===dE) return same ? "편인" : "정인";
+  return "";
+}
+
+function dayOfYear(y,m,d){
+  const a=Date.UTC(y,0,1), b=Date.UTC(y,m-1,d);
+  return Math.floor((b-a)/86400000)+1;
+}
+function equationOfTime(y,m,d){
+  const n=dayOfYear(y,m,d);
+  const B=2*Math.PI*(n-81)/364;
+  return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
+}
+function koreaDST(y,m,d,h,min){
+  const val=m*1000000+d*10000+h*100+min;
+  if(y===1987) return val>=5100200 && val<10110300;
+  if(y===1988) return val>=5080200 && val<10090300;
+  return false;
+}
+function shiftCivil(y,m,d,h,min,deltaMin){
+  const ms=Date.UTC(y,m-1,d,h,min)+Math.round(deltaMin*60000);
+  const dt=new Date(ms);
+  return {y:dt.getUTCFullYear(),m:dt.getUTCMonth()+1,d:dt.getUTCDate(),h:dt.getUTCHours(),min:dt.getUTCMinutes()};
+}
+function trueSolarAdjust(civil, longitude){
+  const eot=equationOfTime(civil.y,civil.m,civil.d);
+  const dst=koreaDST(civil.y,civil.m,civil.d,civil.h,civil.min) ? 60 : 0;
+  const longitudeMin=4*(longitude-135);
+  const total=longitudeMin+eot-dst;
+  return {adjusted:shiftCivil(civil.y,civil.m,civil.d,civil.h,civil.min,total), total, eot, longitudeMin, dst};
+}
+function pad(n){return String(n).padStart(2,"0")}
+function formatDT(o){return `${o.y}-${pad(o.m)}-${pad(o.d)} ${pad(o.h)}:${pad(o.min)}`}
+
+function parseInput(){
+  const [y,m,d]=$("birthDate").value.split("-").map(Number);
+  const [h,min]=$("birthTime").value.split(":").map(Number);
+  if(!y||!m||!d||Number.isNaN(h)||Number.isNaN(min)) throw new Error("생년월일과 출생시간을 확인해 주세요.");
+  const longitude=Number($("longitude").value);
+  if($("timeBasis").value==="true" && (!longitude || longitude<120 || longitude>135.5)){
+    throw new Error("진태양시 보정을 위해 출생지 경도를 확인해 주세요. 한국은 대체로 동경 124~132도 범위입니다.");
+  }
+  return {y,m,d,h,min,longitude,calendar:$("calendarType").value,gender:$("gender").value,place:$("birthPlace").value.trim()};
+}
+
+function makeSolar(input){
+  let civilSolar;
+  if(input.calendar==="solar"){
+    civilSolar=Solar.fromYmdHms(input.y,input.m,input.d,input.h,input.min,0);
+  }else{
+    const lm=$("isLeap").value==="yes" ? -input.m : input.m;
+    civilSolar=Lunar.fromYmdHms(input.y,lm,input.d,input.h,input.min,0).getSolar();
+  }
+  const c={y:civilSolar.getYear(),m:civilSolar.getMonth(),d:civilSolar.getDay(),h:civilSolar.getHour(),min:civilSolar.getMinute()};
+  if($("timeBasis").value==="true"){
+    const adj=trueSolarAdjust(c,input.longitude);
+    return {solar:Solar.fromYmdHms(adj.adjusted.y,adj.adjusted.m,adj.adjusted.d,adj.adjusted.h,adj.adjusted.min,0), civil:c, adj};
+  }
+  return {solar:civilSolar,civil:c,adj:null};
+}
+
+function buildNatal(ec){
+  const pillars=[
+    {key:"time",label:"시주 · 삶의 후반/확장",gz:ec.getTime(), hide:ec.getTimeHideGan(), stemGod:ec.getTimeShiShenGan()},
+    {key:"day",label:"일주 · 나와 생활기반",gz:ec.getDay(), hide:ec.getDayHideGan(), stemGod:"일간"},
+    {key:"month",label:"월주 · 계절/사회",gz:ec.getMonth(), hide:ec.getMonthHideGan(), stemGod:ec.getMonthShiShenGan()},
+    {key:"year",label:"연주 · 바탕/초기환경",gz:ec.getYear(), hide:ec.getYearHideGan(), stemGod:ec.getYearShiShenGan()}
+  ];
+  return {pillars, dayGan:ec.getDayGan(), monthZhi:ec.getMonthZhi()};
+}
+
+function renderPillars(natal){
+  $("pillars").innerHTML=natal.pillars.map(p=>{
+    const gods=p.hide.map(g=>`${GAN_KO[g]}${g} ${tenGod(natal.dayGan,g)}`).join(" · ");
+    return `<div class="pillar">
+      <div class="role">${p.label}</div>
+      <div class="gz">${p.gz}</div>
+      <div class="meta">${koGz(p.gz)} · ${ELEM[p.gz[0]]}/${ELEM[p.gz[1]]}<br>지장간 ${p.hide.join("·")}</div>
+      <div class="gods">${p.key==="day"?"일간":p.stemGod} / ${gods}</div>
+    </div>`;
+  }).join("");
+}
+
+function surfaceElements(natal){
+  const c={목:0,화:0,토:0,금:0,수:0};
+  natal.pillars.forEach(p=>{c[ELEM[p.gz[0]]]++;c[ELEM[p.gz[1]]]++;});
+  return c;
+}
+function renderElements(natal){
+  const counts=surfaceElements(natal), max=Math.max(...Object.values(counts),1);
+  $("elementGrid").innerHTML=["목","화","토","금","수"].map(e=>{
+    const m=ELEM_META[e];
+    return `<div class="el-card">
+      <div class="el-head"><span class="el-name">${e} · ${m.title}</span><span class="el-count">${counts[e]}</span></div>
+      <div class="bar"><span style="width:${counts[e]/max*100}%;background:${m.color}"></span></div>
+      <div class="el-note">${m.text}</div>
+    </div>`;
+  }).join("");
+  const [season, seasonElem]=SEASON[natal.monthZhi];
+  $("seasonReading").innerHTML=`<b>월령을 먼저 봅니다.</b> 월지 ${natal.monthZhi}는 ${season}의 자리입니다.
+  그래서 단순 개수와 별개로 <b>${seasonElem}의 계절 작용</b>이 배경을 이룹니다.
+  이 앱은 표면 오행 개수만으로 신강·신약이나 용신을 자동 단정하지 않고, 월령과 지장간을 따로 설명합니다.`;
+  styleScene(counts,natal);
+}
+
+function styleScene(counts,natal){
+  const scene=$("scene");
+  const rain=scene.querySelector(".rain"), sun=scene.querySelector(".sun"),
+        big=scene.querySelector(".tree-big"), small=scene.querySelector(".tree-small"),
+        earth=scene.querySelector(".earth"), metal=scene.querySelector(".metal");
+  rain.style.opacity=Math.min(.68,.08+counts["수"]*.16);
+  sun.style.opacity=Math.min(.8,counts["화"]*.22);
+  big.style.opacity=Math.min(.95,.18+counts["목"]*.20);
+  small.style.opacity=ELEM[natal.dayGan]==="목" ? 1 : .42;
+  earth.style.opacity=Math.min(.9,.12+counts["토"]*.18);
+  metal.style.opacity=Math.min(.95,.10+counts["금"]*.22);
+}
+
+function visibleTenCounts(natal){
+  const counts={};
+  natal.pillars.forEach(p=>{
+    if(p.key!=="day"){
+      const g=tenGod(natal.dayGan,p.gz[0]); counts[g]=(counts[g]||0)+1;
+    }
+    const main=p.hide[0];
+    const gz=tenGod(natal.dayGan,main); counts[gz]=(counts[gz]||0)+1;
+  });
+  return counts;
+}
+function renderTenGods(natal){
+  const counts=visibleTenCounts(natal);
+  const order=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  $("tenGodSummary").innerHTML=order.map(g=>{
+    const p=TEN_PROFILE[g];
+    return `<div class="ten-card">
+      <span class="ten-count">${counts[g]}곳</span>
+      <div class="ten-name">${g}</div><div class="ten-key">${p.key}</div>
+      <div>${p.strength}.</div>
+      <div class="small" style="margin-top:7px">지나치게 나타날 때: ${p.risk}.</div>
+    </div>`;
+  }).join("");
+  $("hiddenStems").innerHTML=natal.pillars.map(p=>{
+    const details=p.hide.map(g=>`${g}(${tenGod(natal.dayGan,g)})`).join(" · ");
+    return `<span class="chip">${p.label.split(" · ")[0]} ${p.gz[1]} 속 ${details}</span>`;
+  }).join("");
+}
+
+function findRelations(stems,branches, labels){
+  const out=[];
+  for(let i=0;i<stems.length;i++){
+    for(let j=i+1;j<stems.length;j++){
+      if(HEAVEN_COMB[stems[i]+stems[j]] || HEAVEN_COMB[stems[j]+stems[i]]){
+        out.push({type:"천간합", text:`${labels[i]} ${stems[i]}와 ${labels[j]} ${stems[j]}가 합을 이룹니다. 서로 다른 역할이 연결되거나 한쪽이 다른 쪽을 의식하게 되는 구조로 읽습니다.`});
+      }
+    }
+  }
+  for(let i=0;i<branches.length;i++){
+    for(let j=i+1;j<branches.length;j++){
+      const a=branches[i],b=branches[j], name=`${labels[i]} ${a} ↔ ${labels[j]} ${b}`;
+      if(unorderedHas(BRANCH_CHONG,a,b)) out.push({type:"충",text:`${name}: 서로 반대 방향의 힘이 맞서는 충입니다. 변화·이동·재조정의 압력이 생기기 쉬우므로, 한쪽을 없애기보다 두 요구의 역할을 분리하는 방식이 좋습니다.`});
+      if(unorderedHas(BRANCH_LIUHE,a,b)) out.push({type:"육합",text:`${name}: 서로를 끌어당겨 연결하려는 육합입니다. 관계와 협력의 접점이 생기지만, 합이 항상 편안함만 뜻하는 것은 아니므로 전체 구조 속에서 봅니다.`});
+      if(unorderedHas(BRANCH_HAI,a,b)) out.push({type:"해",text:`${name}: 겉으로 크게 부딪히기보다 미세한 불편과 엇갈림이 생기는 해 관계입니다. 기대와 실제 조건의 차이를 점검하는 것이 도움이 됩니다.`});
+      if(unorderedHas(BRANCH_PO,a,b)) out.push({type:"파",text:`${name}: 기존 형태가 느슨해지거나 재편되는 파 관계입니다. 오래된 방식을 고치는 힘으로 쓰면 좋습니다.`});
+      if((a==="子"&&b==="卯")||(a==="卯"&&b==="子")) out.push({type:"형",text:`${name}: 자묘형입니다. 관계의 예의·경계·표현 방식에서 긴장이 생길 수 있어 기준을 명확히 하는 것이 중요합니다.`});
+      if(a===b && ["辰","午","酉","亥"].includes(a)) out.push({type:"자형",text:`${name}: 같은 기운이 반복되어 스스로를 압박하거나 같은 패턴을 되풀이하기 쉬운 자형입니다.`});
+    }
+  }
+  const bset=new Set(branches);
+  SANHE.forEach(g=>{
+    if(g.set.every(x=>bset.has(x))) out.push({type:"삼합",text:`${g.set.join("·")} 삼합이 갖추어져 ${g.elem}의 흐름이 연결됩니다. 여러 자리의 힘이 한 방향으로 모이는 구조입니다.`});
+  });
+  BANGHE.forEach(g=>{
+    if(g.set.every(x=>bset.has(x))) out.push({type:"방합",text:`${g.set.join("·")} 방합이 갖추어져 계절적으로 ${g.elem}의 흐름이 크게 이어집니다.`});
+  });
+  if(["寅","巳","申"].every(x=>bset.has(x))) out.push({type:"삼형",text:"寅·巳·申 삼형이 갖추어져 움직임과 긴장이 반복될 수 있습니다. 속도로 밀기보다 역할·순서를 분명히 하는 것이 중요합니다."});
+  if(["丑","戌","未"].every(x=>bset.has(x))) out.push({type:"삼형",text:"丑·戌·未 삼형이 갖추어져 현실 조건과 책임 사이의 압력이 커질 수 있습니다. 버티기보다 구조를 재정리하는 쪽이 도움이 됩니다."});
+  return out;
+}
+function renderRelations(natal){
+  const ordered=[...natal.pillars].reverse(); // year, month, day, time
+  const labels=ordered.map(p=>p.label.split(" · ")[0]);
+  const stems=ordered.map(p=>p.gz[0]), branches=ordered.map(p=>p.gz[1]);
+  const rel=findRelations(stems,branches,labels);
+  $("relations").innerHTML=rel.length ? rel.map(r=>`<div class="relation ${["충","형","삼형","해"].includes(r.type)?"warn":""}"><b>${r.type}</b> · ${r.text}</div>`).join("")
+  : `<div class="relation">원국 네 지지 사이에서 이 앱이 표시하는 주요 합·충·형·파·해가 두드러지지 않습니다. 관계가 없다는 뜻이 아니라, 다른 생극과 월령의 역할을 더 중심적으로 봅니다.</div>`;
+  return rel;
+}
+
+function landscapeText(natal, relations){
+  const year=[...natal.pillars].find(p=>p.key==="year").gz;
+  const month=[...natal.pillars].find(p=>p.key==="month").gz;
+  const day=[...natal.pillars].find(p=>p.key==="day").gz;
+  const time=[...natal.pillars].find(p=>p.key==="time").gz;
+  const [season]=SEASON[month[1]];
+  const hasChong=relations.some(r=>r.type==="충"||r.type==="삼형");
+  const waterCount=surfaceElements(natal)["수"];
+  const metalCount=surfaceElements(natal)["금"];
+
+  const p1=`<div class="keyline">${season}의 풍경 한가운데, ${STEM_IMG[day[0]]}이 서 있습니다.</div>`;
+  const p2=`<p>태어난 달의 지지는 ${month[1]}입니다. ${BRANCH_IMG[month[1]]}이 이 명식의 계절 배경을 만듭니다.
+  그래서 일간 ${day[0]}(${GAN_KO[day[0]]})의 성질은 혼자 존재하지 않고, 이 계절의 온도와 압력 속에서 모양을 만들어 갑니다.
+  ${STEM_IMG[month[0]]}도 사회적 환경과 일의 방식에 계속 영향을 줍니다.</p>`;
+  const p3=`<p>연주의 ${year}은 풍경의 먼 배경과 뿌리에 가깝습니다. ${STEM_IMG[year[0]]}, 그리고 ${BRANCH_IMG[year[1]]}의 기억이 바탕에 있습니다.
+  시주의 ${time}은 시간이 흐를수록 바깥 활동과 삶의 후반에 더 의식되는 장면입니다. ${STEM_IMG[time[0]]}과 ${BRANCH_IMG[time[1]]}의 성질이 앞으로 펼쳐질 방향에 색을 더합니다.</p>`;
+  let p4="";
+  if(waterCount>=2) p4+=` 물의 흔적이 여러 곳에 있어 이 풍경에는 관찰하고 배우며 의미를 연결하는 습기가 남아 있습니다.`;
+  if(metalCount>=2) p4+=` 금의 기운도 반복되어 주변 공기에는 기준, 책임, 정리와 평가의 서늘함이 분명합니다.`;
+  if(hasChong) p4+=` 동시에 서로 다른 방향의 지지가 맞서는 장면이 있어, 삶에서 한 가지 요구만 따라가기보다 역할과 시기를 나누는 능력이 중요해집니다.`;
+  return p1+p2+p3+`<p>${p4||"이 풍경의 핵심은 어느 한 오행의 많고 적음보다, 서로 다른 기능이 어떻게 연결되는지를 보는 데 있습니다."}</p>`;
+}
+
+function dominantGods(natal){
+  const counts=visibleTenCounts(natal);
+  return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).slice(0,3);
+}
+function renderLife(natal, relations){
+  const gods=dominantGods(natal);
+  const profiles=gods.map(g=>TEN_PROFILE[g]);
+  const hasConflict=relations.some(r=>["충","형","삼형"].includes(r.type));
+  const dm=STEM_IMG[natal.dayGan];
+  const cards=[
+    ["생각하고 결정하는 방식", `${dm}을 중심으로 합니다. ${profiles[0]?.strength||"자기 방식으로 판단하는 힘"}이 먼저 작동하고, 결정을 내릴 때는 주변 조건을 충분히 읽은 뒤 움직이는 편으로 해석할 수 있습니다.`],
+    ["일과 역할", `${gods.slice(0,2).join("·")} 기능이 두드러집니다. ${profiles.slice(0,2).map(p=>p.strength).join("과 ")}이 강점이 될 수 있습니다. 일을 많이 하는 것보다 이 힘을 어떤 구조에 쓰느냐가 중요합니다.`],
+    ["관계와 협업", hasConflict ? "원국에 충·형 같은 긴장이 있어 서로 다른 요구 사이에서 중재자 역할을 맡거나, 마음과 현실의 속도가 달라질 수 있습니다. 관계에서는 참는 것보다 역할·기대·경계를 말로 분명히 하는 것이 도움이 됩니다." : "큰 충돌 관계보다 각 자리의 기능을 조율하는 일이 중요합니다. 관계에서는 상대에 맞추는 것과 자기 기준을 지키는 것 사이의 균형을 의식하는 것이 좋습니다."],
+    ["성장 과제", `강점도 지나치면 부담이 됩니다. ${profiles.map(p=>p.risk).join(", ")} 같은 모습이 반복되는지 살펴보세요. 조절 방향은 ${profiles.map(p=>p.action).join(" / ")}입니다.`]
+  ];
+  $("lifeReading").innerHTML=cards.map(([h,t])=>`<div class="card"><h3>${h}</h3>${t}</div>`).join("");
+}
+
+function dayunRelations(dyGz,natal){
+  const natalOrdered=[...natal.pillars].reverse();
+  const labels=natalOrdered.map(p=>p.label.split(" · ")[0]).concat(["대운"]);
+  const stems=natalOrdered.map(p=>p.gz[0]).concat([dyGz[0]]);
+  const branches=natalOrdered.map(p=>p.gz[1]).concat([dyGz[1]]);
+  const all=findRelations(stems,branches,labels);
+  return all.filter(r=>r.text.includes("대운"));
+}
+
+
+const DAYUN_GUIDE = {
+  "비견":{
+    theme:"내 기준을 세우고 지속하는 시기",
+    opening:"남의 기준보다 ‘나는 어떻게 할 것인가’가 중요해지는 흐름입니다.",
+    best:"혼자 버티기보다 자기 전문영역을 분명히 하고, 같은 방향의 사람과 오래 갈 구조를 만드는 데 쓰면 좋습니다.",
+    caution:"자기 방식이 굳어지면 타인의 조언을 놓치거나 모든 일을 혼자 떠맡기 쉽습니다.",
+    action:"한 해에 꼭 지킬 핵심 원칙 2~3개를 정하고, 나머지는 위임하거나 단순화해 보세요."
+  },
+  "겁재":{
+    theme:"독립성과 협업의 경계를 다시 정하는 시기",
+    opening:"내가 직접 움직이고 싶어지는 힘과 사람 사이의 경쟁·연대가 동시에 커질 수 있습니다.",
+    best:"새 일을 벌이는 추진력은 살리되, 역할·돈·시간의 경계를 처음부터 명확히 하는 것이 중요합니다.",
+    caution:"의욕이 앞서 다른 사람의 몫까지 떠맡거나 자원이 여러 곳으로 흩어질 수 있습니다.",
+    action:"함께할 일과 혼자 할 일을 구분하고, 공동 프로젝트는 책임 범위를 문서로 남겨 보세요."
+  },
+  "식신":{
+    theme:"쌓은 것을 밖으로 만들어 내는 시기",
+    opening:"배운 것과 경험이 말·글·수업·작품·서비스처럼 눈에 보이는 결과물로 이어지기 쉬운 흐름입니다.",
+    best:"완벽하게 준비된 뒤 시작하기보다 작게 만들어 자주 공개하는 방식이 잘 맞습니다.",
+    caution:"편안함을 좇다가 속도가 늦어지거나, 하고 싶은 일이 많아 마무리가 약해질 수 있습니다.",
+    action:"분기마다 하나씩 ‘완성해서 보여 줄 결과물’을 정해 두세요."
+  },
+  "상관":{
+    theme:"기존 방식을 고쳐 내 방식으로 만드는 시기",
+    opening:"문제점이 잘 보이고, ‘왜 꼭 이렇게 해야 하지?’라는 질문이 많아지는 흐름입니다.",
+    best:"비판 자체보다 대안·새 방법·새 콘텐츠를 만드는 데 힘을 쓰면 독창성이 살아납니다.",
+    caution:"기준이나 권위와 정면충돌하면 에너지가 소모되고, 말이 결과보다 앞설 수 있습니다.",
+    action:"불만 하나를 발견할 때마다 실행 가능한 대안 하나를 함께 적는 습관을 만들어 보세요."
+  },
+  "편재":{
+    theme:"기회와 자원을 넓게 움직이는 시기",
+    opening:"사람·일·돈·정보가 여러 방향에서 들어오며 현실적인 선택지가 늘어날 수 있습니다.",
+    best:"기회를 잡는 감각을 살리되, 무엇을 하지 않을지 정해야 실제 성과가 남습니다.",
+    caution:"일을 너무 넓혀 체력과 돈, 집중력이 분산되기 쉽습니다.",
+    action:"새 일을 받기 전에 기존 일 하나를 줄이는 ‘하나 더하면 하나 덜기’ 원칙을 써보세요."
+  },
+  "정재":{
+    theme:"성과를 축적하고 생활 기반을 단단히 하는 시기",
+    opening:"눈에 보이는 결과, 관리, 돈과 시간의 질서, 생활기반을 다지는 일이 중요해지는 흐름입니다.",
+    best:"새로운 가능성을 계속 늘리기보다 지금까지의 경험을 자산·기록·시스템으로 바꾸는 데 강점이 있습니다.",
+    caution:"안정에 지나치게 매이면 변화 시기를 놓치거나 책임만 계속 늘어날 수 있습니다.",
+    action:"경험을 문서·콘텐츠·저축·자격·시스템 등 ‘남는 형태’로 바꾸는 프로젝트를 하나 정해 보세요."
+  },
+  "편관":{
+    theme:"압박을 실력과 결단으로 바꾸는 시기",
+    opening:"해야 할 일, 책임, 긴장도가 커지며 빠른 판단을 요구받을 수 있는 흐름입니다.",
+    best:"무조건 견디기보다 우선순위·절차·역할을 세우면 높은 압박이 실행력과 리더십으로 바뀝니다.",
+    caution:"모든 문제를 내 책임으로 받아들이면 과로와 자기압박이 커지기 쉽습니다.",
+    action:"반복되는 부담을 개인 노력으로 해결하지 말고 체크리스트·절차·분담 구조로 바꿔 보세요."
+  },
+  "정관":{
+    theme:"역할과 신뢰를 공식적인 형태로 만드는 시기",
+    opening:"직책, 책임, 사회적 기준, 약속과 같은 ‘공적인 역할’이 중요해지는 흐름입니다.",
+    best:"제도와 규칙을 적으로 보기보다 자신의 전문성을 인정받는 틀로 활용하는 것이 좋습니다.",
+    caution:"남이 기대하는 역할에만 충실하다 보면 내 방향과 욕구가 뒤로 밀릴 수 있습니다.",
+    action:"맡은 역할 안에서 ‘내 이름으로 남길 전문성 한 가지’를 분명히 정해 보세요."
+  },
+  "편인":{
+    theme:"깊이 파고 새롭게 해석하는 시기",
+    opening:"익숙한 답보다 숨은 원리와 다른 관점을 찾고 싶어지는 흐름입니다.",
+    best:"연구·공부·관찰·재해석을 자기만의 방법론으로 연결하면 큰 자산이 됩니다.",
+    caution:"생각과 자료 수집이 많아지면서 실행이나 사람과의 소통이 늦어질 수 있습니다.",
+    action:"공부한 것을 매달 한 번씩 글·수업·발표처럼 다른 사람이 볼 수 있는 형태로 꺼내 보세요."
+  },
+  "정인":{
+    theme:"배우고 체계화해 내 것으로 만드는 시기",
+    opening:"지식, 자격, 멘토, 경험을 흡수하고 기반을 다지기 좋은 흐름입니다.",
+    best:"배운 내용을 체계화하고 다른 사람에게 설명할 때 지식이 더 단단해집니다.",
+    caution:"준비가 부족하다는 생각 때문에 시작을 계속 미룰 수 있습니다.",
+    action:"새로 배운 것은 48시간 안에 한 번 적용하거나 누군가에게 설명해 보세요."
+  }
+};
+
+const RELATION_GUIDE = {
+  "충":{
+    meaning:"기존 자리와 새 흐름이 서로 다른 방향을 요구합니다.",
+    strategy:"둘 중 하나를 억지로 없애기보다 역할·장소·시간을 나누어 재배치하는 것이 핵심입니다.",
+    action:"큰 결정을 한 번에 뒤집기보다 시험 운영 → 조정 → 확정의 3단계로 움직여 보세요."
+  },
+  "육합":{
+    meaning:"사람·역할·자원이 연결될 여지가 커집니다.",
+    strategy:"좋은 연결을 만드는 시기지만, 관계 때문에 내 기준이 흐려지지 않도록 조건을 분명히 해야 합니다.",
+    action:"협업은 기대사항과 책임 범위를 먼저 합의하고 시작하세요."
+  },
+  "천간합":{
+    meaning:"서로 다른 기능이 의식적으로 연결되거나 한쪽이 다른 쪽의 영향을 강하게 받습니다.",
+    strategy:"두 역할을 경쟁시키기보다 하나의 프로젝트 안에서 함께 쓰는 방식이 좋습니다.",
+    action:"서로 다른 두 강점을 하나의 결과물에 묶어 보세요."
+  },
+  "해":{
+    meaning:"큰 충돌보다 작은 오해, 기대 차이, 미묘한 불편이 누적되기 쉽습니다.",
+    strategy:"짐작하지 말고 조건과 기대를 말로 확인하는 것이 중요합니다.",
+    action:"불편이 생기면 감정 해석보다 사실·역할·기한부터 확인하세요."
+  },
+  "파":{
+    meaning:"기존 형태가 느슨해지고 다시 짜야 할 부분이 생깁니다.",
+    strategy:"망가졌다고 보기보다 오래된 방식을 개편할 기회로 쓰는 편이 좋습니다.",
+    action:"유지비가 큰 일·관계·습관 하나를 골라 구조를 단순화해 보세요."
+  },
+  "형":{
+    meaning:"같은 문제를 반복해서 마주치거나 긴장이 안쪽에서 쌓이기 쉽습니다.",
+    strategy:"의지로 참기보다 반복되는 패턴 자체를 발견하고 규칙을 바꾸는 것이 중요합니다.",
+    action:"같은 문제가 세 번 반복되면 개인의 노력 대신 절차를 바꾸세요."
+  },
+  "자형":{
+    meaning:"자기 기준과 자기압박이 반복적으로 강해질 수 있습니다.",
+    strategy:"더 잘하려는 마음보다 충분히 잘한 지점을 확인하는 장치가 필요합니다.",
+    action:"완료 기준을 미리 정하고, 그 기준을 넘으면 일단 끝내는 연습을 해보세요."
+  },
+  "삼형":{
+    meaning:"여러 자리의 긴장이 한꺼번에 연결되어 속도와 압박이 커질 수 있습니다.",
+    strategy:"동시에 해결하려 하지 말고 문제의 순서를 정하는 것이 중요합니다.",
+    action:"가장 영향이 큰 문제 하나만 먼저 해결하고 나머지는 보류 목록으로 옮기세요."
+  },
+  "삼합":{
+    meaning:"여러 자리의 힘이 한 방향으로 모여 특정 기능이 크게 살아납니다.",
+    strategy:"흐름이 강해지는 만큼 한 분야에 집중하면 성과를 키우기 좋습니다.",
+    action:"여러 선택 중 이 시기에 가장 힘이 모이는 한 가지를 대표 프로젝트로 정해 보세요."
+  },
+  "방합":{
+    meaning:"계절적으로 비슷한 기운이 연속되어 한 방향의 분위기가 강해집니다.",
+    strategy:"환경의 흐름을 거스르기보다 그 기운을 생산적으로 쓸 통로를 만드는 것이 좋습니다.",
+    action:"지금 자연스럽게 반복되는 활동을 전문성이나 루틴으로 발전시켜 보세요."
+  }
+};
+
+const RELATION_PRIORITY = ["삼형","충","형","자형","해","파","삼합","방합","육합","천간합"];
+
+function mainRelation(rels){
+  if(!rels || !rels.length) return null;
+  for(const type of RELATION_PRIORITY){
+    const hit=rels.find(r=>r.type===type);
+    if(hit) return hit;
+  }
+  return rels[0];
+}
+
+function combineDayunTheme(ganGod,zhiGod){
+  if(ganGod===zhiGod) return `${ganGod}의 기능이 천간과 지지에서 함께 반복되어 이 주제가 더 선명하게 드러납니다.`;
+  const pair=new Set([ganGod,zhiGod]);
+  if(pair.has("정재") && (pair.has("정관")||pair.has("편관"))) return "현실적 성과와 책임이 함께 커지는 조합입니다. ‘많이 맡는 것’보다 지속 가능한 구조를 만드는 것이 중요합니다.";
+  if((pair.has("식신")||pair.has("상관")) && (pair.has("비견")||pair.has("겁재"))) return "자기 생각을 자기 방식으로 표현하고 밖으로 내놓는 힘이 커지는 조합입니다.";
+  if((pair.has("정인")||pair.has("편인")) && (pair.has("정관")||pair.has("편관"))) return "배움과 기준이 함께 작동해 공부·자격·전문성·공적 역할을 연결하기 좋은 조합입니다.";
+  if((pair.has("편재")||pair.has("정재")) && (pair.has("비견")||pair.has("겁재"))) return "내가 주도해서 현실의 일과 자원을 움직이는 힘이 커집니다. 확장보다 경계와 우선순위 관리가 중요합니다.";
+  if((pair.has("식신")||pair.has("상관")) && (pair.has("정재")||pair.has("편재"))) return "표현과 결과가 연결되기 쉬운 조합입니다. 아이디어를 실제 상품·프로젝트·성과로 완성하는 데 유리합니다.";
+  return `${ganGod}의 중심 주제 위에 ${zhiGod}의 기능이 현실적인 배경으로 함께 작동합니다.`;
+}
+
+function dayunInterpret(dyGz,natal, rels){
+  const ganGod=tenGod(natal.dayGan,dyGz[0]);
+  const branchMain=HIDDEN[dyGz[1]][0];
+  const zhiGod=tenGod(natal.dayGan,branchMain);
+  const a=DAYUN_GUIDE[ganGod], b=DAYUN_GUIDE[zhiGod];
+  const rel=mainRelation(rels);
+  const relGuide=rel ? RELATION_GUIDE[rel.type] : null;
+
+  const bodyParts=[
+    `<b>이 시기의 중심:</b> ${a.theme}.`,
+    a.opening,
+    `지지 ${dyGz[1]}의 주된 십신은 ${zhiGod}이라, ${b.theme.toLowerCase()}의 색도 함께 들어옵니다.`,
+    combineDayunTheme(ganGod,zhiGod)
+  ];
+  if(relGuide){
+    bodyParts.push(`<b>${rel.type}이 더하는 변화:</b> ${relGuide.meaning} ${relGuide.strategy}`);
+  }else{
+    bodyParts.push(`원국과의 강한 충돌 표시보다 ${ganGod}·${zhiGod}의 기능 자체를 어떻게 쓰는지가 더 중요한 대운입니다.`);
+  }
+
+  const directionParts=[
+    `<div><b>잘 쓰는 방향</b><br>${a.best}</div>`,
+    `<div style="margin-top:10px"><b>주의할 점</b><br>${a.caution} ${ganGod!==zhiGod ? b.caution : ""}</div>`,
+    `<div style="margin-top:10px"><b>현실적인 제안</b><br>${relGuide ? relGuide.action+" " : ""}${a.action}</div>`
+  ];
+
+  return {
+    ganGod,zhiGod,
+    headline:a.theme,
+    body:bodyParts.join(" "),
+    direction:directionParts.join("")
+  };
+}
+
+function renderDayun(ec,natal){
+  const gender=$("gender").value==="male"?1:0;
+  const yun=ec.getYun(gender,2);
+  const start=yun.getStartSolar();
+  const currentYear=new Date().getFullYear();
+  const birthYear=Number($("birthDate").value.slice(0,4));
+
+  // lunar-javascript sect=2: 절기까지의 실제 분(minute)을 3일=1년 비율로 환산
+  const exactAge=yun.getStartYear() + yun.getStartMonth()/12 + yun.getStartDay()/365 + yun.getStartHour()/(365*24);
+  const daeunSu=Math.max(1,Math.round(exactAge));
+  // 한국 만세력에서 흔히 보이는 세는나이식 연도 표기: 출생연도 자체를 1세로 셈
+  const nominalFirstYear=birthYear + daeunSu - 1;
+  const convention=$("dayunConvention")?.value || "korean";
+
+  $("yunInfo").innerHTML=`
+    이 명식은 <b>${yun.isForward()?"순행":"역행"}</b>입니다.
+    절기와 출생 시각의 실제 간격을 3일=1년으로 환산하면 첫 교운은 약 <b>${start.toYmd()}</b>이고,
+    이를 전통적인 대운수로 반올림하면 <b>${daeunSu}세 대운</b>입니다.
+    한국 만세력 가운데 세는나이 방식으로 연도를 붙이는 경우 ${daeunSu}세는 <b>${nominalFirstYear}년</b>으로 표시됩니다.
+    그래서 같은 명식이 어떤 곳에서는 ${nominalFirstYear}년, 정밀 교운일 기준에서는 ${start.getYear()}년부터로 보일 수 있습니다.
+    <span class="small">아래 표는 현재 선택한 ‘${convention==="korean"?"한국 만세력식 · 세는나이":"정밀 교운일 기준"}’으로 연도를 표시합니다.</span>
+    ${INPUT_MODE==="manual"?" 원국은 직접 입력값을 사용하고, 대운 방향과 시작 시점은 위 출생 정보로 계산합니다.":""}
+  `;
+
+  const list=yun.getDaYun(9).filter(d=>d.getIndex()>0);
+  $("dayunList").innerHTML=list.map(d=>{
+    const index=d.getIndex();
+    const gz=d.getGanZhi(),contacts=dayunContacts(gz,natal),x=dayunNarrative(gz,natal,contacts);
+    let displayStart,displayEnd,ageLabel,current;
+    if(convention==="korean"){
+      displayStart=nominalFirstYear+(index-1)*10;
+      displayEnd=displayStart+9;
+      const startAge=daeunSu+(index-1)*10;
+      ageLabel=`세는나이 ${startAge}세부터`;
+      current=currentYear>=displayStart&&currentYear<=displayEnd;
+    }else{
+      displayStart=d.getStartYear();
+      displayEnd=d.getEndYear();
+      ageLabel=`만 나이 약 ${d.getStartAge()-1}세 전후`;
+      current=currentYear>=displayStart&&currentYear<=displayEnd;
+    }
+    return `<article class="dayun ${current?"current":""}">
+      <div class="dy-head">
+        <span class="dy-gz">${gz} · ${koGz(gz)}</span>
+        <span class="dy-years">${displayStart}–${displayEnd}년 · ${ageLabel}</span>
+        ${current?'<span class="current-badge">현재 대운</span>':""}
+      </div>
+      <div class="dy-theme">${x.title}</div>
+      <div class="dy-prose"><p>${x.scene}</p><p>${x.life}</p></div>
+      <div class="direction"><b>이 10년을 살아가는 방향</b><br>${x.direction}</div>
+    </article>`;
+  }).join("");
+}
+
+function renderPractice(currentInfo,natal){
+  if(!currentInfo){
+    $("practice").innerHTML=`<div class="card">현재 연도가 표시한 대운 범위 밖에 있습니다.</div>`;
+    return;
+  }
+  const {d,gz,interp,rels}=currentInfo;
+  const a=DAYUN_GUIDE[interp.ganGod], b=DAYUN_GUIDE[interp.zhiGod];
+  const rel=mainRelation(rels);
+  const rg=rel ? RELATION_GUIDE[rel.type] : null;
+  const items=[
+    ["지금 가장 먼저 할 일", `${a.action}${rg ? " "+rg.action : ""}`],
+    ["의식적으로 줄일 것", `${a.caution} ${interp.ganGod!==interp.zhiGod ? b.caution : ""}`],
+    ["다음 대운에 가져갈 것", `${d.getEndYear()}년까지 이 시기의 핵심인 ‘${a.theme}’을 경험으로만 흘려보내지 말고, 문서·결과물·관계·자산·습관 중 하나의 형태로 남겨 두세요.`]
+  ];
+  $("practice").innerHTML=items.map(([h,t])=>`<div class="card"><h3>${h}</h3>${t}</div>`).join("");
+}
+
+function renderTimeNote(input, made, ec){
+  if(made.adj){
+    const a=made.adj;
+    $("timeCorrection").innerHTML=`입력 시각 ${formatDT(made.civil)} → 진태양시 약 <b>${formatDT(a.adjusted)}</b>
+    (${a.total>=0?"+":""}${a.total.toFixed(1)}분 보정: 경도 ${a.longitudeMin.toFixed(1)}분 + 균시차 ${a.eot.toFixed(1)}분${a.dst?` − 서머타임 ${a.dst}분`:""}).
+    계산된 시주는 <b>${ec.getTime()}(${koGz(ec.getTime())})</b>입니다.`;
+  }else{
+    $("timeCorrection").innerHTML=`입력한 표준시 ${formatDT(made.civil)}를 그대로 사용했습니다. 계산된 시주는 <b>${ec.getTime()}(${koGz(ec.getTime())})</b>입니다.`;
+  }
+}
+
+
+// ---------- Narrative engine 2.0 ----------
+let INPUT_MODE="birth";
+
+const SEASON_SCENE={
+  寅:"겨울의 기운이 물러나고 땅속 생명이 막 올라오기 시작하는 초봄",
+  卯:"초목이 가장 부드럽고 왕성하게 퍼지는 봄 한가운데",
+  辰:"봄비를 머금은 흙이 여름을 준비하는 늦봄",
+  巳:"햇빛과 열기가 빠르게 올라오는 초여름",
+  午:"빛과 열이 가장 강하게 드러나는 한여름",
+  未:"뜨거운 계절이 지나며 흙이 마르고 익어가는 늦여름",
+  申:"더위가 물러나고 공기와 사물이 단단해지기 시작하는 초가을",
+  酉:"공기가 맑고 서늘해지며 초목이 잘리고 정리되는 가을 한가운데",
+  戌:"수확 뒤의 들판이 마르고 단단해지는 늦가을",
+  亥:"찬 기운과 깊은 물이 돌아오기 시작하는 초겨울",
+  子:"물과 어둠이 가장 깊어지는 한겨울",
+  丑:"얼었던 땅이 아직 차갑고 축축한 늦겨울"
+};
+const STEM_NOUN={甲:"큰 나무",乙:"작은 풀과 화초",丙:"태양",丁:"등불과 작은 불꽃",戊:"큰 산과 대지",己:"밭과 정원 흙",庚:"큰 쇠와 원석",辛:"날카롭게 벼린 금속",壬:"큰 강과 바다",癸:"이슬과 가는 비"};
+const STEM_ACTION={
+  甲:"곧게 뻗으며 스스로 방향을 세우는 힘이 있습니다.",
+  乙:"주변의 조건을 세심하게 살피고, 꺾이기보다 방향을 바꾸어 이어 가는 힘이 있습니다.",
+  丙:"안에 머무르기보다 밖으로 비추고 드러내는 힘이 있습니다.",
+  丁:"크게 번지기보다 필요한 곳을 골라 오래 밝히는 힘이 있습니다.",
+  戊:"쉽게 흔들리지 않는 기반과 경계를 만드는 힘이 있습니다.",
+  己:"돌보고 정리하면서 현실적인 결실을 만들어 가는 힘이 있습니다.",
+  庚:"불필요한 것을 잘라 내고 새로운 길을 여는 힘이 있습니다.",
+  辛:"작은 차이를 구별하고 정교하게 다듬는 힘이 있습니다.",
+  壬:"경계를 넘어 넓게 흐르고 서로 다른 것을 연결하는 힘이 있습니다.",
+  癸:"눈에 띄지 않게 스며들면서 오랫동안 적시는 힘이 있습니다."
+};
+const STEM_PERSONA={
+  甲:"자기 방향을 분명히 세우고 앞으로 나아가려는 편입니다.",
+  乙:"주변을 세심하게 살피면서도, 상황에 맞게 방향을 조정해 관계와 흐름을 이어 가는 편입니다.",
+  丙:"생각이나 감정을 비교적 분명하게 드러내며 주변에 영향을 주는 편입니다.",
+  丁:"크게 나서기보다 필요한 순간에 정확하게 힘을 쓰는 편입니다.",
+  戊:"쉽게 흔들리기보다 자신의 자리와 책임을 지키려는 편입니다.",
+  己:"주변을 돌보고 정리해 실제로 굴러가게 만드는 데 익숙한 편입니다.",
+  庚:"문제가 보이면 미루기보다 기준을 세우고 정리하려는 편입니다.",
+  辛:"작은 차이와 완성도를 중요하게 여기며 세밀하게 판단하는 편입니다.",
+  壬:"넓게 보고 여러 사람과 정보를 연결하며 가능성을 찾는 편입니다.",
+  癸:"겉으로 서두르기보다 충분히 관찰하고 안에서 의미를 숙성시키는 편입니다."
+};
+const SCENE_TITLE={
+  목:"들판에 새로운 가지와 식물이 늘어나는 때",
+  화:"구름 사이로 빛과 온기가 들어오는 때",
+  토:"땅이 두터워지고 현실의 무게가 커지는 때",
+  금:"공기가 더 서늘해지고 가지를 다듬는 힘이 강해지는 때",
+  수:"비와 물길이 늘어나 풍경의 습도와 깊이가 커지는 때"
+};
+const BRANCH_TEXTURE={
+  子:"차갑고 깊은 물",丑:"차갑고 습한 겨울 흙",寅:"봄이 시작되는 숲과 단단한 뿌리",卯:"부드럽게 퍼지는 봄의 풀과 가지",
+  辰:"물기를 머금은 늦봄의 흙",巳:"움직임이 빠른 초여름의 열기",午:"한낮처럼 강하게 드러난 불",未:"따뜻하고 마른 늦여름의 흙",
+  申:"움직임을 품은 초가을의 단단한 금속",酉:"잘 벼린 금속과 서늘한 가을 공기",戌:"마르고 굳어가는 늦가을의 흙",亥:"겨울 초입의 넓고 깊은 물"
+};
+const POSITION_NAME={year:"연주",month:"월주",day:"일주",time:"시주"};
+const POSITION_LIFE={
+  year:"자신보다 앞선 세계, 집안과 초기 환경, 오래된 가치의 배경",
+  month:"사회와 일의 환경, 내가 부딪히는 기준과 계절",
+  day:"나 자신과 가장 가까운 생활 기반, 내밀한 삶",
+  time:"삶의 후반, 앞으로 만들 결과물과 미래 지향"
+};
+const GOD_PROSE={
+  "비견":"자기 기준을 지키고 같은 눈높이의 사람과 나란히 서려는 힘",
+  "겁재":"스스로 움직이고 경쟁하거나 연대하며 판을 넓히는 힘",
+  "식신":"알고 느낀 것을 편안한 말·글·수업·결과물로 꺼내는 힘",
+  "상관":"기존의 틀을 의심하고 더 나은 방식으로 고쳐 표현하는 힘",
+  "편재":"여러 사람·일·자원을 빠르게 읽고 현실에서 움직이는 힘",
+  "정재":"시간과 자원을 꾸준히 관리해 손에 잡히는 결과로 쌓는 힘",
+  "편관":"압력과 어려운 과제를 피하지 않고 결단으로 통과하는 힘",
+  "정관":"역할과 책임, 공적인 기준 안에서 신뢰를 쌓는 힘",
+  "편인":"여러 조각의 정보와 경험을 오래 모아 자기 방식으로 재해석하는 힘",
+  "정인":"배운 것을 차분히 흡수하고 체계화해 자기 기반으로 만드는 힘"
+};
+const GOD_SHADOW={
+  "비견":"자기 기준이 단단한 만큼 타인의 방식이 들어올 틈이 좁아질 수 있습니다",
+  "겁재":"의욕이 커지면 다른 사람의 몫까지 떠맡거나 경쟁에 에너지를 쓸 수 있습니다",
+  "식신":"편안하게 잘하는 일에 머물면 새로운 긴장을 피하게 될 수 있습니다",
+  "상관":"문제가 너무 잘 보일 때 비판이 결과보다 먼저 나갈 수 있습니다",
+  "편재":"가능성이 많이 보일수록 일과 관계를 지나치게 넓힐 수 있습니다",
+  "정재":"안정과 책임을 지키느라 필요한 변화를 늦출 수 있습니다",
+  "편관":"긴장에 익숙해져 스스로를 계속 몰아붙일 수 있습니다",
+  "정관":"남이 기대하는 역할을 잘 수행하다가 자신의 방향이 뒤로 밀릴 수 있습니다",
+  "편인":"생각과 해석이 깊어질수록 행동 전에 준비가 끝없이 길어질 수 있습니다",
+  "정인":"충분히 준비된 뒤 시작하려다 시작 시점을 늦출 수 있습니다"
+};
+const ELEMENT_LIFE={목:"성장·기획·관계와 방향",화:"표현·가시화·즐거움과 생산",토:"현실 운영·축적·생활 기반",금:"기준·정리·책임과 판단",수:"학습·관찰·정보와 내면의 자원"};
+
+const GAN_KR_INPUT={갑:"甲",을:"乙",병:"丙",정:"丁",무:"戊",기:"己",경:"庚",신:"辛",임:"壬",계:"癸"};
+const ZHI_KR_INPUT={자:"子",축:"丑",인:"寅",묘:"卯",진:"辰",사:"巳",오:"午",미:"未",신:"申",유:"酉",술:"戌",해:"亥"};
+
+function normalizeGzInput(v){
+  v=(v||"").trim().replace(/\s+/g,"").replace(/[·,\/]/g,"");
+  v=v.replace(/(연주|월주|일주|시주|년주)$/,"").replace(/[년월일시]$/,"");
+  if(v.length===2 && GAN.includes(v[0]) && ZHI.includes(v[1])) return v;
+  if(v.length===2 && GAN_KR_INPUT[v[0]] && ZHI_KR_INPUT[v[1]]) return GAN_KR_INPUT[v[0]]+ZHI_KR_INPUT[v[1]];
+  return "";
+}
+function validateGz(v,label){
+  const normalized=normalizeGzInput(v);
+  if(!normalized) throw new Error(`${label}는 ‘갑인’ 또는 ‘甲寅’처럼 천간과 지지를 두 글자로 입력해 주세요.`);
+  return normalized;
+}
+function buildManualNatal(){
+  const y=validateGz($("manualYear").value,"연주"), m=validateGz($("manualMonth").value,"월주"), d=validateGz($("manualDay").value,"일주"), t=validateGz($("manualTime").value,"시주");
+  const dayGan=d[0];
+  const make=(key,label,gz)=>({key,label,gz,hide:HIDDEN[gz[1]],stemGod:key==="day"?"일간":tenGod(dayGan,gz[0])});
+  return {pillars:[make("time","시주 · 삶의 후반/확장",t),make("day","일주 · 나와 생활기반",d),make("month","월주 · 계절/사회",m),make("year","연주 · 바탕/초기환경",y)],dayGan,monthZhi:m[1]};
+}
+function pillarBy(natal,key){return natal.pillars.find(p=>p.key===key)}
+function hiddenElementCounts(natal){
+  const c={목:0,화:0,토:0,금:0,수:0};
+  natal.pillars.forEach(p=>p.hide.forEach(g=>c[ELEM[g]]++)); return c;
+}
+function visibleStemGodCounts(natal){
+  const c={}; natal.pillars.forEach(p=>{if(p.key!=="day"){const g=tenGod(natal.dayGan,p.gz[0]);c[g]=(c[g]||0)+1;}}); return c;
+}
+function allGodCounts(natal){
+  const c={};
+  natal.pillars.forEach(p=>{
+    if(p.key!=="day"){const g=tenGod(natal.dayGan,p.gz[0]);c[g]=(c[g]||0)+1.6;}
+    p.hide.forEach((h,i)=>{const g=tenGod(natal.dayGan,h);c[g]=(c[g]||0)+(i===0?1:.45);});
+  }); return c;
+}
+function inverseGen(elem){return Object.keys(GEN).find(k=>GEN[k]===elem)}
+function inverseCtrl(elem){return Object.keys(CTRL).find(k=>CTRL[k]===elem)}
+function hiddenLocations(natal,elem){return natal.pillars.filter(p=>p.hide.some(g=>ELEM[g]===elem)).map(p=>`${POSITION_NAME[p.key]} ${p.gz[1]}`)}
+function orderedPillars(natal){return [pillarBy(natal,"year"),pillarBy(natal,"month"),pillarBy(natal,"day"),pillarBy(natal,"time")]}
+
+function renderPillars(natal){
+  $("pillars").innerHTML=natal.pillars.map(p=>{
+    const mainGod=p.key==="day"?"나 자신":tenGod(natal.dayGan,p.gz[0]);
+    const hidden=p.hide.map(g=>`${g} ${tenGod(natal.dayGan,g)}`).join(" · ");
+    return `<div class="pillar"><div class="role">${POSITION_NAME[p.key]}</div><div class="gz">${p.gz}</div><div class="meta">${koGz(p.gz)} · ${ELEM[p.gz[0]]}/${ELEM[p.gz[1]]}</div><div class="gods">${mainGod}<br><span class="small">지장간 ${hidden}</span></div></div>`;
+  }).join("");
+}
+
+function relationDetails(natal){
+  const ps=orderedPillars(natal), out=[];
+  for(let i=0;i<ps.length;i++) for(let j=i+1;j<ps.length;j++){
+    const A=ps[i],B=ps[j],a=A.gz[1],b=B.gz[1],sa=A.gz[0],sb=B.gz[0];
+    if(HEAVEN_COMB[sa+sb]||HEAVEN_COMB[sb+sa]) out.push({type:"천간합",A,B,a:sa,b:sb,stem:true});
+    if(unorderedHas(BRANCH_CHONG,a,b)) out.push({type:"충",A,B,a,b});
+    if(unorderedHas(BRANCH_LIUHE,a,b)) out.push({type:"육합",A,B,a,b});
+    if(unorderedHas(BRANCH_HAI,a,b)) out.push({type:"해",A,B,a,b});
+    if(unorderedHas(BRANCH_PO,a,b)) out.push({type:"파",A,B,a,b});
+    if((a==="子"&&b==="卯")||(a==="卯"&&b==="子")) out.push({type:"형",A,B,a,b});
+    if(a===b&&["辰","午","酉","亥"].includes(a)) out.push({type:"자형",A,B,a,b});
+  }
+  const bset=new Set(ps.map(p=>p.gz[1]));
+  SANHE.forEach(g=>{if(g.set.every(x=>bset.has(x)))out.push({type:"삼합",chars:g.set.join("·"),elem:g.elem})});
+  BANGHE.forEach(g=>{if(g.set.every(x=>bset.has(x)))out.push({type:"방합",chars:g.set.join("·"),elem:g.elem})});
+  if(["寅","巳","申"].every(x=>bset.has(x)))out.push({type:"삼형",chars:"寅·巳·申"});
+  if(["丑","戌","未"].every(x=>bset.has(x)))out.push({type:"삼형",chars:"丑·戌·未"});
+  return out;
+}
+function relationLifeAxis(r){
+  if(!r.A||!r.B)return "여러 자리의 기운이 한 방향으로 묶입니다";
+  const keys=new Set([r.A.key,r.B.key]);
+  if(keys.has("day")&&keys.has("time"))return "지금까지 지켜 온 생활 방식과 앞으로 자라가고 싶은 방향";
+  if(keys.has("month")&&keys.has("day"))return "사회에서 요구받는 역할과 내밀한 생활의 리듬";
+  if(keys.has("year")&&keys.has("time"))return "오래된 배경과 앞으로 만들고 싶은 미래";
+  if(keys.has("year")&&keys.has("day"))return "초기 환경에서 익힌 방식과 지금의 나";
+  if(keys.has("month")&&keys.has("time"))return "현재의 사회적 역할과 미래의 결과물";
+  return `${POSITION_LIFE[r.A.key]}와 ${POSITION_LIFE[r.B.key]}`;
+}
+
+function landscapeText(natal, relations){
+  const y=pillarBy(natal,"year"),m=pillarBy(natal,"month"),d=pillarBy(natal,"day"),t=pillarBy(natal,"time");
+  const surf=surfaceElements(natal), hidden=hiddenElementCounts(natal), dayE=ELEM[d.gz[0]], resource=inverseGen(dayE), output=GEN[dayE];
+  let blocks=[];
+  blocks.push(`<div class="opening-scene">${SEASON_SCENE[m.gz[1]]}. 그 한가운데 ${STEM_NOUN[d.gz[0]]} 하나가 자리합니다. ${STEM_ACTION[d.gz[0]]} 그 뿌리 아래에는 ${BRANCH_TEXTURE[d.gz[1]]}이 놓여 있습니다.</div>`);
+  blocks.push(`<p>이 풍경의 주인공은 <strong>${d.gz[0]}(${GAN_KO[d.gz[0]]})</strong>입니다. ${STEM_IMG[d.gz[0]]}으로 상상할 수 있습니다. 다만 사주는 주인공 하나의 성질만으로 읽기 어렵습니다. 그 존재가 어느 계절에 놓였는지, 어떤 자원을 공급받는지, 무엇에 의해 다듬어지는지를 함께 보아야 합니다. 월주 ${m.gz}의 지지 ${m.gz[1]}는 ${BRANCH_TEXTURE[m.gz[1]]}입니다. 이 계절감이 명식 전체의 온도와 분위기를 결정하는 가장 큰 배경이 됩니다.</p>`);
+  blocks.push(`<p>풍경의 뒤편에는 연주 <strong>${y.gz}</strong>가 놓여 있습니다. ${STEM_NOUN[y.gz[0]]}와 ${BRANCH_TEXTURE[y.gz[1]]}이 만든 장면입니다. 연주는 ${POSITION_LIFE.year}과 연결해 읽을 수 있습니다. 지금 눈앞의 나와는 조금 떨어져 있지만, ‘세상은 이런 곳이다’, ‘나는 이런 방향으로 자랄 수 있다’라는 오래된 감각과 기준을 만들어 주는 배경에 가깝습니다.</p>`);
+  if(surf[resource]>=2) blocks.push(`<p>이 풍경에는 <strong>${resource}</strong>의 흔적이 반복됩니다. ${ELEMENT_LIFE[resource]}에 해당하는 자원이 주인공 쪽으로 계속 들어오는 모습입니다. 특히 ${natal.pillars.filter(p=>ELEM[p.gz[0]]===resource).map(p=>p.gz[0]).join("·")||resource} 같은 천간이 보이면, 이것은 땅속에만 숨어 있는 자원이 아니라 삶의 표면에서도 의식되는 기능이 됩니다.</p>`);
+  if(surf[output]===0 && hidden[output]>0){
+    const loc=hiddenLocations(natal,output).join(", ");
+    blocks.push(`<p>반대로 <strong>${output}</strong>는 겉으로는 잘 보이지 않지만 완전히 없는 것은 아닙니다. ${loc}의 지장간 안에 숨어 있습니다. 그림으로 말하면 필요한 빛이나 표현의 불씨가 하늘에 떠 있는 것이 아니라 땅속에 묻혀 있는 셈입니다. 그래서 이 기능은 저절로 전면에 나오기보다, 어느 시점부터 스스로 꺼내 쓰면서 커지는 성격에 가깝습니다.</p>`);
+  }else if(surf[output]===0 && hidden[output]===0){
+    blocks.push(`<p><strong>${output}</strong>는 겉과 속 모두에서 두드러지지 않습니다. 그래서 ${ELEMENT_LIFE[output]}에 해당하는 행동은 환경이 알아서 만들어 주기보다 의식적으로 훈련할 때 삶의 균형이 좋아질 수 있습니다.</p>`);
+  }
+  const important=relations.find(r=>r.type==="충"&&((r.A?.key==="day"&&r.B?.key==="time")||(r.B?.key==="day"&&r.A?.key==="time"))) || relations.find(r=>r.type==="충");
+  if(important) blocks.push(`<p>그리고 이 풍경에는 한 방향으로만 흘러가지 않는 긴장이 있습니다. <strong>${important.a}와 ${important.b}의 충</strong>입니다. ${BRANCH_TEXTURE[important.a]}과 ${BRANCH_TEXTURE[important.b]}이 서로 마주 보며, ${relationLifeAxis(important)} 사이에 동시에 중요한 두 요구를 만들어 냅니다. 이것은 ‘나쁜 충’이라기보다 한 사람이 오래도록 두 가치를 조정하며 자기 방식을 만들어 가게 하는 힘에 가깝습니다.</p>`);
+  blocks.push(`<p>그래서 이 명식을 한 장면으로 합치면, 주인공은 단순히 강하거나 약한 존재가 아닙니다. 주변에서 자원을 받아들이고, 계절의 기준에 맞추어 자신을 다듬고, 땅속에 숨어 있는 다음 기능을 조금씩 꺼내 쓰면서 자기 영역을 넓혀 가는 존재에 더 가깝습니다.</p>`);
+  return blocks.join("");
+}
+function signatureFor(natal){
+  const d=pillarBy(natal,"day"),m=pillarBy(natal,"month"),surf=surfaceElements(natal),hidden=hiddenElementCounts(natal),dayE=ELEM[d.gz[0]],resource=inverseGen(dayE),output=GEN[dayE];
+  if(surf[resource]>=2 && surf[output]===0 && hidden[output]>0) return `“${SEASON[m.gz[1]][0]}의 환경에서 충분히 배우고 버텨 온 ${STEM_NOUN[d.gz[0]]}. 이제 다음 단계는 더 많이 받아들이는 것이 아니라, 안에 숨은 ${output}의 힘을 꺼내 세상 밖으로 내놓는 것입니다.”`;
+  if(surf[output]>=2) return `“이 사주의 다음 단계는 생각을 더 보태는 것보다 이미 가진 힘을 어떤 결과와 관계로 연결할지 선택하는 데 있습니다.”`;
+  return `“이 사주의 핵심은 타고난 한 가지 성격보다, 서로 다른 기운을 어떤 순서와 방식으로 연결해 자기 삶의 형태를 만드는가에 있습니다.”`;
+}
+
+function pillarStory(natal,p){
+  const d=pillarBy(natal,"day"), god=p.key==="day"?"일간":tenGod(natal.dayGan,p.gz[0]), mainHidden=p.hide[0], hiddenGod=tenGod(natal.dayGan,mainHidden);
+  const heading={year:`멀리 뒤에는 ${STEM_NOUN[p.gz[0]]}가 있습니다 — ${p.gz}`,month:`이 풍경의 계절과 기준 — ${p.gz}`,day:`여기가 주인공의 자리입니다 — ${p.gz}`,time:`풍경의 앞쪽, 앞으로 열리는 자리 — ${p.gz}`}[p.key];
+  let text="";
+  if(p.key==="year") text=`천간 ${p.gz[0]}은 ${STEM_IMG[p.gz[0]]}이고, 지지 ${p.gz[1]}는 ${BRANCH_TEXTURE[p.gz[1]]}입니다. 이 둘이 만나 연주의 배경을 만듭니다. 연주는 ${POSITION_LIFE.year}과 연결해 읽을 수 있습니다. 일간 ${d.gz[0]}의 입장에서 ${p.gz[0]}은 <strong>${god}</strong>이므로, ${GOD_PROSE[god]}이 삶의 먼 배경에서 오래 영향을 미칠 수 있습니다. 눈앞의 모습은 작고 유연해 보여도, 그 뒤에는 생각보다 오래된 기준이나 강한 생명력이 자리하고 있을 수 있다는 뜻입니다.`;
+  if(p.key==="month") text=`월주는 사주의 계절이자 사람이 가장 자주 부딪히는 사회적 공기입니다. ${p.gz[1]}는 ${BRANCH_TEXTURE[p.gz[1]]}이고, 천간 ${p.gz[0]}은 일간에게 <strong>${god}</strong>입니다. 즉 ${GOD_PROSE[god]}이 사회와 일의 장면에서 비교적 직접적으로 의식됩니다. 이 자리는 단순히 ‘성격’이라기보다 내가 어떤 환경에서 실력을 다듬게 되는지를 보여주는 자리로 읽는 편이 좋습니다.`;
+  if(p.key==="day") text=`천간 ${p.gz[0]}은 이 명식에서 ‘나’를 나타내는 기준점입니다. ${STEM_ACTION[p.gz[0]]} 그 아래의 ${p.gz[1]}는 ${BRANCH_TEXTURE[p.gz[1]]}이어서, 겉으로 드러나는 태도와 실제 생활을 받치는 바탕이 한 자리에서 만납니다. ${p.gz[1]} 속의 주된 기운 ${mainHidden}은 <strong>${hiddenGod}</strong>입니다. 그래서 아주 가까운 생활에서는 ${GOD_PROSE[hiddenGod]}이 생각보다 현실적인 방식으로 드러날 수 있습니다.`;
+  if(p.key==="time") text=`시주는 미래를 단정하는 자리가 아니라, 시간이 흐르며 더 많이 사용하게 되는 기능과 앞으로 남길 결과물을 상상하게 하는 자리입니다. ${STEM_IMG[p.gz[0]]}이 앞쪽에 놓이고, 아래에는 ${BRANCH_TEXTURE[p.gz[1]]}이 있습니다. 일간에게 ${p.gz[0]}은 <strong>${god}</strong>이므로 ${GOD_PROSE[god]}이 후반의 삶에서 점점 더 중요한 주제가 될 수 있습니다. 지지 안의 ${mainHidden}(${hiddenGod})까지 보면, 그 방향이 어떤 현실의 형태를 띠는지도 함께 볼 수 있습니다.`;
+  return `<article class="story-chapter"><div class="story-title">${heading}</div><div class="story-body"><p>${text}</p></div></article>`;
+}
+function renderPillarStories(natal){$("pillarStories").innerHTML=orderedPillars(natal).map(p=>pillarStory(natal,p)).join("")}
+
+function renderElements(natal){
+  const surf=surfaceElements(natal),hidden=hiddenElementCounts(natal),d=pillarBy(natal,"day"),dayE=ELEM[d.gz[0]],resource=inverseGen(dayE),output=GEN[dayE],wealth=CTRL[dayE],officer=inverseCtrl(dayE);
+  let parts=[];
+  parts.push(`<p>오행을 숫자로만 세면 ${["목","화","토","금","수"].map(e=>`${e} ${surf[e]}`).join(", ")}입니다. 하지만 같은 한 글자라도 <strong>월령에 놓인 글자와 멀리 있는 글자는 무게가 같지 않습니다.</strong> 그래서 이 숫자는 풍경의 재료를 확인하는 용도이고, 해석의 결론은 아닙니다.</p>`);
+  parts.push(`<p>일간이 ${d.gz[0]}이라면 흐름을 이렇게 볼 수 있습니다. <strong>${resource} → ${dayE} → ${output}</strong>. ${resource}는 나를 길러 주는 입력과 자원, ${dayE}은 그것을 받아 자기 식으로 살아내는 나, ${output}는 내가 밖으로 만들어 내는 표현과 결과입니다. 그 옆에서 ${officer}은 나를 다듬는 기준과 압력, ${wealth}는 현실에서 관리하고 붙잡아야 할 자원으로 작동합니다.</p>`);
+  if(surf[resource]>surf[output] && surf[output]===0 && hidden[output]>0) parts.push(`<p>이 명식은 특히 앞의 두 단계가 먼저 보입니다. ${resource}의 입력은 겉에 드러나지만 ${output}는 지장간 안에 숨어 있습니다. 상징적으로 말하면 <strong>배우고 이해하고 자기 식으로 연결하는 힘은 자연스럽게 작동하지만, 그것을 세상 밖으로 꺼내는 일은 의식적으로 불을 켜야 시작되는 구조</strong>입니다. 그래서 부족한 것을 더 채우기보다 이미 충분한 입력을 출력으로 바꾸는 연습이 중요해집니다.</p>`);
+  else if(surf[output]>=2) parts.push(`<p>${output}가 겉으로 반복되어, 안에 있는 것을 밖으로 꺼내는 통로가 비교적 잘 보입니다. 이 경우 다음 과제는 ‘더 표현하기’ 자체보다 무엇을 남기고 무엇을 덜어낼지 선택하는 데 있습니다.</p>`);
+  if(surf[officer]>=2) parts.push(`<p>${officer}도 표면에서 반복됩니다. 그래서 삶에는 기준, 책임, 평가, 정확성의 문제가 자주 등장할 수 있습니다. 이 힘은 나를 억누르는 것만이 아니라 거친 가능성을 전문성으로 다듬어 주는 도구가 될 수 있습니다. 다만 기준이 너무 안쪽으로 들어오면 스스로를 계속 검사하는 방식으로 바뀔 수 있습니다.</p>`);
+  $("elementNarrative").innerHTML=parts.join("");
+  $("elementFacts").innerHTML=["목","화","토","금","수"].map(e=>`<span class="element-fact"><b>${e}</b> 겉 ${surf[e]} · 지장간 ${hidden[e]}</span>`).join("");
+  const [season,seasonElem]=SEASON[natal.monthZhi];
+  $("seasonReading").innerHTML=`월지 <b>${natal.monthZhi}</b>는 ${season}에 해당하고 ${seasonElem}의 계절 작용이 배경이 됩니다. 따라서 오행 개수가 같더라도 계절과 자리, 지장간에 따라 실제 작동 방식은 달라집니다.`;
+}
+
+function renderTenGods(natal){
+  const visible=visibleStemGodCounts(natal), all=allGodCounts(natal), ordered=Object.keys(all).sort((a,b)=>all[b]-all[a]);
+  let blocks=[];
+  const repeated=Object.keys(visible).filter(g=>visible[g]>=2);
+  if(repeated.length){
+    const g=repeated[0]; blocks.push(`<p>먼저 눈에 들어오는 것은 <strong>${g}</strong>입니다. 천간에서 같은 역할이 반복되기 때문입니다. ${GOD_PROSE[g]}입니다. 같은 역할이 반복되면 그 기능은 특정 순간의 성향이라기보다, 삶에서 자주 꺼내 쓰는 익숙한 방식이 되기 쉽습니다. 그래서 ${GOD_SHADOW[g]}.</p>`);
+  }else if(ordered.length){const g=ordered[0];blocks.push(`<p>전체를 놓고 보면 <strong>${g}</strong>의 역할이 비교적 자주 연결됩니다. ${GOD_PROSE[g]}입니다. 이것은 성격표가 아니라, 문제를 만났을 때 가장 먼저 의지하기 쉬운 사고방식과 대응 방식에 가깝습니다.</p>`)}
+  ordered.slice(0,4).forEach((g,i)=>{
+    if(i===0 && (repeated.length||ordered.length===0))return;
+    blocks.push(`<p><strong>${g}</strong>도 함께 봐야 합니다. ${GOD_PROSE[g]}입니다. 강점으로 쓰일 때는 삶의 자원이 되지만, 한 기능만 지나치게 사용하면 ${GOD_SHADOW[g]}.</p>`);
+  });
+  const surf=surfaceElements(natal),hidden=hiddenElementCounts(natal),dayE=ELEM[natal.dayGan],out=GEN[dayE];
+  if(surf[out]===0&&hidden[out]>0){
+    const outGod=POL[natal.dayGan]===1?"식신":"식신"; // 설명은 오행 흐름 중심
+    blocks.push(`<p>흥미로운 점은 ${out}가 천간과 지지의 겉면에는 잘 드러나지 않지만 지장간 안에 존재한다는 것입니다. 일간이 밖으로 생하는 ${out}는 십신으로 <strong>식상</strong>의 영역입니다. 말하기, 가르치기, 글쓰기, 발표, 창작, 만들어 낸 것을 사람과 나누는 힘입니다. 즉 표현력이 ‘없는’ 것이 아니라 <strong>처음부터 전면에 서기보다 안쪽에서 익은 뒤 꺼내 쓰는 기능</strong>으로 보는 편이 자연스럽습니다.</p>`);
+  }
+  $("tenGodNarrative").innerHTML=blocks.join("");
+  $("hiddenStems").innerHTML=`지장간까지 펼쳐 보면 · `+natal.pillars.map(p=>`${POSITION_NAME[p.key]} ${p.gz[1]} : ${p.hide.map(h=>`${h}(${tenGod(natal.dayGan,h)})`).join(" · ")}`).join("　/　");
+}
+
+function relationStory(r){
+  if(r.type==="삼합"||r.type==="방합") return `<article class="story-chapter"><div class="story-title">${r.chars} ${r.type} — 여러 자리가 한 방향으로 모입니다</div><div class="story-body"><p>${r.elem}의 흐름이 여러 자리에서 이어져 한 기능이 개인의 성향을 넘어 환경 전체의 분위기가 되기 쉽습니다. 이런 관계는 ‘무조건 좋다’기보다, 그 기운을 어디에 쓸지 선택했을 때 힘이 커지는 구조로 읽는 편이 좋습니다.</p></div></article>`;
+  if(r.type==="삼형") return `<article class="story-chapter"><div class="story-title">${r.chars} 삼형 — 한 번에 여러 방향의 압력이 걸립니다</div><div class="story-body"><p>서로 다른 긴장이 연쇄적으로 이어지는 그림입니다. 이런 때에는 의지로 모두 버티기보다 문제의 순서를 정하고 역할을 분리하는 것이 중요합니다.</p></div></article>`;
+  const axis=relationLifeAxis(r), A=POSITION_NAME[r.A.key],B=POSITION_NAME[r.B.key];
+  let title=`${r.a}과 ${r.b}의 ${r.type} — ${axis}`;
+  let body="";
+  if(r.type==="충") body=`${r.a}는 ${BRANCH_TEXTURE[r.a]}, ${r.b}는 ${BRANCH_TEXTURE[r.b]}입니다. 성질이 다른 두 장면이 ${A}와 ${B}에서 서로 마주 봅니다. 그래서 이것을 단순한 불화나 사건으로 단정하기보다, <strong>${axis} 사이에서 두 가치가 동시에 중요해지는 구조</strong>로 읽을 수 있습니다. 선택을 못 하는 사람이어서가 아니라 두 쪽 모두 버릴 수 없기 때문에 생기는 긴장일 수 있습니다. 삶에서는 한쪽을 억누르기보다 시기·역할·공간을 나누어 두 요구가 각각 일할 자리를 만들어 줄 때 충이 생산적인 변화의 힘이 됩니다.`;
+  else if(r.type==="육합") body=`${A}와 ${B}의 기운이 서로 끌어당기는 관계입니다. ${axis} 사이에서 연결점이 만들어지기 쉬운 그림입니다. 다만 합은 무조건 편안하다는 뜻보다, 서로를 강하게 의식하고 묶는 힘에 가깝습니다. 무엇을 위해 연결되는지 목적을 분명히 할 때 이 관계가 자원이 됩니다.`;
+  else if(r.type==="천간합") body=`겉으로 드러난 두 천간이 서로를 강하게 의식하는 구조입니다. ${axis}가 완전히 따로 움직이기보다 한 선택이 다른 선택에 영향을 미치기 쉽습니다. 두 역할 중 하나를 버리기보다 하나의 일 안에서 함께 쓰는 방식이 자연스럽습니다.`;
+  else if(r.type==="해") body=`큰 충돌보다 기대와 실제가 조금씩 어긋나는 그림입니다. ${axis}에서 ‘말하지 않아도 알겠지’가 쌓이면 피로가 생길 수 있습니다. 그래서 이 관계는 감정보다 조건과 기대를 분명히 말할수록 훨씬 부드럽게 작동합니다.`;
+  else if(r.type==="파") body=`이미 만들어진 형태가 조금씩 느슨해져 다시 짜야 하는 관계입니다. ${axis}에서 오래된 방식이 더 이상 맞지 않을 때 나타나는 개편의 힘으로 읽을 수 있습니다. 망가짐보다 리모델링에 가깝습니다.`;
+  else if(r.type==="형"||r.type==="자형") body=`밖에서 한 번 크게 부딪히기보다 안에서 긴장과 반복이 생기기 쉬운 관계입니다. ${axis}에서 같은 문제를 되풀이한다면 더 노력하기보다 반복을 만드는 규칙 자체를 바꾸는 편이 좋습니다.`;
+  return `<article class="story-chapter"><div class="story-title">${title}</div><div class="story-body"><p>${body}</p></div></article>`;
+}
+function renderRelations(natal){
+  const rel=relationDetails(natal);
+  $("relations").innerHTML=rel.length?rel.map(relationStory).join(""):`<article class="story-chapter"><div class="story-title">큰 충돌보다 미세한 조율이 중요한 명식입니다</div><div class="story-body"><p>이 앱이 우선 표시하는 주요 합·충·형·파·해가 두드러지지 않습니다. 관계가 없다는 뜻이 아니라, 큰 충돌을 찾기보다 계절과 생극, 십신이 서로 어떻게 이어지는지를 보는 편이 이 명식에는 더 적절합니다.</p></div></article>`;
+  return rel;
+}
+
+function renderLife(natal,relations){
+  const surf=surfaceElements(natal),hidden=hiddenElementCounts(natal),visible=visibleStemGodCounts(natal),all=allGodCounts(natal),ordered=Object.keys(all).sort((a,b)=>all[b]-all[a]);
+  const dayE=ELEM[natal.dayGan],resource=inverseGen(dayE),out=GEN[dayE];
+  const m=pillarBy(natal,"month"),d=pillarBy(natal,"day"),t=pillarBy(natal,"time");
+  let thinking="";
+  if(surf[resource]>=2) thinking+=`${resource}가 주인공을 여러 번 길러 주기 때문에 정보를 그냥 지나치기보다 받아들이고 저장하고 연결하는 과정이 길어질 수 있습니다. `;
+  if((visible["편인"]||0)+(visible["정인"]||0)>=1) thinking+=`특히 인성이 겉에 드러나 있어 사람의 말이나 사건을 ‘무슨 뜻일까’ 하고 한 번 더 해석하는 경향으로 나타날 수 있습니다. `;
+  if(surf["금"]>=1 && dayE==="목") thinking+=`여기에 금의 기준이 더해지면 ‘내 생각이 맞는가, 더 정확하게 설명할 수 없는가’를 스스로 다시 검토하게 됩니다. 깊이가 장점이지만 행동 전에 검토가 너무 길어지지 않도록 출구가 필요합니다.`;
+  if(!thinking){
+    const first=ordered[0], second=ordered[1];
+    thinking=`이 명식에서는 ${first?GOD_PROSE[first]:"자기 방식으로 상황을 읽는 힘"}${second?`과 함께 ${GOD_PROSE[second]}`:""}이 비교적 먼저 작동합니다. 한 기능만 반복해서 쓰기보다, 서로 다른 능력이 자연스럽게 이어지도록 만드는 것이 중요합니다.`;
+  }
+
+  let work=`직업을 특정 하나로 단정하기보다 <strong>${ELEMENT_LIFE[resource]} → ${ELEMENT_LIFE[dayE]} → ${ELEMENT_LIFE[out]}</strong>의 흐름이 살아나는 일을 보는 편이 좋습니다. `;
+  if(surf[resource]>0 && hidden[out]>0) work+=`즉 정보를 받아들이고, 자기 방식으로 연결하고, 다른 사람이 이해할 수 있는 형태로 다시 만드는 일입니다. 연구만 하거나 전달만 하는 한쪽보다 <strong>분석+기획, 전문성+교육, 지식+글쓰기, 경험+콘텐츠</strong>처럼 두 영역을 이어 주는 역할에서 강점이 살아날 수 있습니다.`;
+  else work+=`내 안에 들어온 것을 실제 결과와 사람에게 연결하는 통로가 있는 일이 잘 맞습니다.`;
+
+  let relation=`${STEM_PERSONA[d.gz[0]]} `;
+  if(surf["금"]>=1) relation+=`하지만 기준과 구별의 기운도 함께 있어 겉으로 부드럽게 맞춰 주더라도 내부의 판단선은 꽤 분명할 수 있습니다. 처음부터 누구와도 깊어지기보다 관찰하고 신뢰를 확인한 뒤 오래 가는 방식이 더 자연스러울 수 있습니다. `;
+  const dayTimeChong=relations.find(r=>r.type==="충"&&new Set([r.A?.key,r.B?.key]).has("day")&&new Set([r.A?.key,r.B?.key]).has("time"));
+  if(dayTimeChong) relation+=`특히 일지와 시지의 충은 가까운 생활에서 지키고 싶은 안정과 앞으로 가고 싶은 방향이 다를 수 있음을 보여 줍니다. 관계에서도 ‘책임져야 한다’와 ‘이제는 나도 자라야 한다’를 동시에 인정하는 것이 중요합니다.`;
+
+  let trap="";
+  if(surf[resource]>=2 && surf[out]===0) trap=`가장 조심할 패턴은 <strong>‘충분히 준비되어야 시작할 수 있다’</strong>는 마음입니다. 입력은 계속 들어오고 기준은 계속 검토하는데, 밖으로 내보내는 ${out}가 겉에 적으면 조사 → 수정 → 다시 조사 → 다시 수정의 고리가 길어질 수 있습니다. 이럴 때 필요한 것은 더 좋은 자료가 아니라 ‘여기까지면 내놓는다’는 완료 기준입니다. 70%쯤 되었을 때 한 번 밖으로 내보내고 반응을 받아 다시 다듬는 방식이 오히려 이 명식의 깊이를 살립니다.`;
+  else {
+    const cautions=ordered.slice(0,2).map(g=>GOD_SHADOW[g]).filter(Boolean);
+    trap=`강점은 자주 쓰는 만큼 익숙한 해결법이 되지만, 모든 문제를 같은 방식으로 풀려고 하면 오히려 부담이 될 수 있습니다. ${cautions.join(" 또, ")}. 이런 모습이 반복된다면 능력이 부족한 것이 아니라 같은 능력을 너무 오래 한 방향으로만 쓰고 있다는 신호로 볼 수 있습니다.`;
+  }
+
+  const tg=tenGod(natal.dayGan,t.gz[0]), hgs=t.hide.map(g=>tenGod(natal.dayGan,g));
+  let later=`시주 ${t.gz}는 시간이 흐르며 더 자주 사용하는 기능을 상상하게 합니다. 천간의 ${tg}은 ${GOD_PROSE[tg]}이고, 지지 ${t.gz[1]} 안에는 ${t.hide.map((g,i)=>`${g}(${hgs[i]})`).join("·")}이 들어 있습니다. 그래서 삶의 후반은 단순히 ‘지금보다 편해지는 때’라기보다, 지금까지 안쪽에서 익힌 기능을 어떤 형태로 남길지 묻는 방향으로 갈 수 있습니다. 경험을 혼자 품는 데서 끝나지 않고 사람·글·수업·작품·시스템처럼 다른 존재가 자라게 하는 형태로 바뀔 때 시주의 의미가 더 살아납니다.`;
+
+  const chapters=[
+    ["왜 생각이 깊어질 수 있을까",thinking],
+    ["일에서는 무엇을 할 때 이 구조가 살아날까",work],
+    ["관계에서는 부드러움과 기준이 함께 있습니다",relation],
+    ["가장 조심해야 할 패턴",trap],
+    ["시간이 흐를수록 질문이 바뀔 수 있습니다",later]
+  ];
+  $("lifeReading").innerHTML=chapters.map(([h,b])=>`<article class="life-chapter"><h3>${h}</h3><p>${b}</p></article>`).join("");
+}
+
+function dayunContacts(dyGz,natal){
+  const fake={pillars:[...natal.pillars,{key:"luck",label:"대운",gz:dyGz,hide:HIDDEN[dyGz[1]],stemGod:tenGod(natal.dayGan,dyGz[0])}]};
+  const out=[];
+  natal.pillars.forEach(p=>{
+    const a=p.gz[1],b=dyGz[1],sa=p.gz[0],sb=dyGz[0];
+    if(HEAVEN_COMB[sa+sb]||HEAVEN_COMB[sb+sa])out.push({type:"천간합",pillar:p});
+    if(unorderedHas(BRANCH_CHONG,a,b))out.push({type:"충",pillar:p});
+    if(unorderedHas(BRANCH_LIUHE,a,b))out.push({type:"육합",pillar:p});
+    if(unorderedHas(BRANCH_HAI,a,b))out.push({type:"해",pillar:p});
+    if(unorderedHas(BRANCH_PO,a,b))out.push({type:"파",pillar:p});
+    if((a==="子"&&b==="卯")||(a==="卯"&&b==="子"))out.push({type:"형",pillar:p});
+    if(a===b&&["辰","午","酉","亥"].includes(a))out.push({type:"자형",pillar:p});
+  });
+  return out;
+}
+function sceneVerb(elem){return {목:"들판에 새로운 가지와 식물이 늘어납니다",화:"구름 사이로 빛과 온기가 들어옵니다",토:"땅이 두터워지고 현실의 무게가 커집니다",금:"공기가 더 서늘해지고 가지를 다듬는 힘이 강해집니다",수:"비와 물길이 늘어나 풍경의 습도와 깊이가 커집니다"}[elem]}
+function dayunTitle(gz,god,contacts){
+  const elem=ELEM[gz[0]],c=contacts[0], base=SCENE_TITLE[elem];
+  if(c?.type==="충") return `${base} — 그리고 ${POSITION_NAME[c.pillar.key]}의 오래된 방식이 흔들리는 시기`;
+  if(c?.type==="육합") return `${base} — ${POSITION_NAME[c.pillar.key]}의 힘과 새롭게 연결되는 시기`;
+  if(c?.type==="천간합") return `${STEM_NOUN[gz[0]]}의 기운이 들어와 기존의 한 역할과 강하게 얽히는 시기`;
+  return `${base} — ${god}의 기능을 이전과 다른 방식으로 써 보는 시기`;
+}
+function dayunNarrative(gz,natal,contacts){
+  const sg=tenGod(natal.dayGan,gz[0]), main=HIDDEN[gz[1]][0],bg=tenGod(natal.dayGan,main),se=ELEM[gz[0]],be=ELEM[gz[1]];
+  let scene=`대운 ${gz}가 들어오면 원국의 풍경에 ${STEM_NOUN[gz[0]]}의 성질이 새로 놓입니다. ${sceneVerb(se)}. 지지 ${gz[1]}는 ${BRANCH_TEXTURE[gz[1]]}이어서 ${se}의 표면적 변화 아래에 ${be}의 현실적인 배경이 함께 깔립니다.`;
+  let life=`십신으로 천간은 <strong>${sg}</strong>입니다. ${GOD_PROSE[sg]}이 이 10년의 전면에 나오기 쉽습니다. 지지의 주된 기운 ${main}은 <strong>${bg}</strong>이라 ${GOD_PROSE[bg]}도 실제 생활의 조건으로 작동합니다. 따라서 이 시기는 ‘무슨 사건이 생긴다’보다 <strong>${sg}의 방식으로 문제를 풀면서 ${bg}의 과제를 현실에서 다루는 시기</strong>라고 보는 편이 좋습니다.`;
+  if(contacts.length){
+    const c=contacts[0],axis=POSITION_LIFE[c.pillar.key];
+    if(c.type==="충") life+=` 특히 대운의 ${gz[1]}이 원국 ${POSITION_NAME[c.pillar.key]} ${c.pillar.gz[1]}과 충하므로 ${axis}에서 기존 방식과 새 요구가 동시에 중요해집니다. 이때는 한 번에 모든 것을 뒤집는 선택보다 작게 시험하고 조정하면서 새 자리를 만드는 쪽이 안정적입니다.`;
+    else if(c.type==="육합") life+=` 대운의 ${gz[1]}이 원국 ${POSITION_NAME[c.pillar.key]}와 합을 이루어 ${axis} 쪽의 사람·역할·자원과 연결될 여지가 커집니다. 연결 자체보다 무엇을 위해 묶이는지를 분명히 할수록 좋습니다.`;
+    else if(c.type==="천간합") life+=` 천간합이 생겨 겉으로 드러난 역할 두 가지가 서로 강하게 의식됩니다. 하나를 포기하기보다 한 프로젝트 안에서 함께 쓰는 방식이 자연스럽습니다.`;
+    else life+=` ${c.type} 관계가 ${POSITION_NAME[c.pillar.key]}와 생겨 ${axis}의 오래된 방식을 다시 점검하게 할 수 있습니다.`;
+  }
+  let direction="";
+  if(sg==="편인"||sg==="정인") direction=`공부를 더 많이 쌓는 것만으로 끝내지 말고, 배운 것을 글·수업·방법론으로 정리해 남기는 것이 좋습니다. 이 시기의 성장은 ‘입력량’보다 ‘내 언어로 정리된 지식’에서 확인하는 편이 맞습니다.`;
+  else if(sg==="식신"||sg==="상관") direction=`완벽히 준비된 뒤 보여 주기보다 일정한 주기로 밖에 내놓는 것이 좋습니다. 말하기, 가르치기, 쓰기, 만들기 가운데 하나를 주된 출력 통로로 정하면 대운의 힘이 훨씬 구체적인 결과로 남습니다.`;
+  else if(sg==="정재"||sg==="편재") direction=`새로운 기회를 늘리는 것보다 시간·돈·사람·프로젝트를 어디에 배치할지 선택하는 능력이 중요합니다. ‘할 수 있는가’보다 ‘남길 가치가 있는가’를 기준으로 일을 고르면 좋습니다.`;
+  else if(sg==="정관"||sg==="편관") direction=`책임을 더 많이 떠맡는 것으로 실력을 증명하지 않는 것이 중요합니다. 반복되는 부담은 기준·절차·분담 구조로 바꾸고, 맡은 역할 안에서 내 이름으로 남길 전문성 하나를 분명히 만드는 편이 좋습니다.`;
+  else direction=`자기 힘으로 움직이는 에너지가 커지는 만큼 혼자 다 해내려 하지 않는 것이 중요합니다. 내가 꼭 결정할 일과 다른 사람에게 맡겨도 되는 일을 구분하면 이 힘이 경쟁보다 주도성으로 남습니다.`;
+  if(GOD_SHADOW[sg]) direction+=` 다만 ${GOD_SHADOW[sg]}. 이 모습이 반복되기 시작하면 힘을 더 쓰는 것이 아니라 사용 방식을 바꿀 신호로 보면 됩니다.`;
+  return {sg,bg,title:dayunTitle(gz,sg,contacts),scene,life,direction};
+}
+function renderDayun(ec,natal){
+  const gender=$("gender").value==="male"?1:0;
+  const yun=ec.getYun(gender,2);
+  const start=yun.getStartSolar();
+  const currentYear=new Date().getFullYear();
+  const birthYear=Number($("birthDate").value.slice(0,4));
+
+  // 절입과 출생 시각 사이의 간격을 3일=1년으로 환산한 정밀값
+  const exactAge=yun.getStartYear()
+    + yun.getStartMonth()/12
+    + yun.getStartDay()/365
+    + yun.getStartHour()/(365*24);
+
+  // 전통 만세력에서 쓰는 한 자리 대운수.
+  // 이 명식처럼 약 4년 몇 개월이면 '대운수 4'로 읽는 것이 핵심이다.
+  const daeunSu=Math.max(1,Math.round(exactAge));
+  const countingYear=birthYear + daeunSu - 1;
+  const convention=$("dayunConvention")?.value || "daeunsu";
+
+  $("yunInfo").innerHTML=`
+    <b>이 명식의 대운수는 ${daeunSu}세</b>입니다.
+    따라서 전통적인 대운표에서는 <b>${daeunSu}세 → ${daeunSu+10}세 → ${daeunSu+20}세 → ${daeunSu+30}세…</b>처럼 10년마다 다음 대운으로 넘어갑니다.
+    <br><br>
+    절기 시각을 분 단위까지 사용해 실제 경과시간으로 환산하면 첫 교운은 약 <b>${start.toYmd()}</b>입니다.
+    한편 출생연도를 1세로 세는 옛 세는나이 표에 ${daeunSu}세를 대응시키면 <b>${countingYear}년</b>이 됩니다.
+    이 때문에 어떤 만세력에는 ‘${daeunSu}세’ 또는 ‘${countingYear}년’, 정밀 교운 계산에는 ‘${start.getYear()}년 무렵’이 함께 나타날 수 있습니다.
+    <br><br>
+    <b>중요한 점:</b> 이 셋은 서로 다른 대운을 뜻하는 것이 아닙니다. 
+    <b>대운수 ${daeunSu}</b>가 기본값이고, ${countingYear}년은 세는나이식 연도 환산, ${start.toYmd()}는 절기 간격을 세밀하게 환산한 교운일입니다.
+    ${INPUT_MODE==="manual"?" 원국은 직접 입력한 명식을 사용하고, 대운 방향과 교운 시점만 위 출생 정보로 계산합니다.":""}
+  `;
+
+  const list=yun.getDaYun(9).filter(d=>d.getIndex()>0);
+  $("dayunList").innerHTML=list.map(d=>{
+    const index=d.getIndex();
+    const gz=d.getGanZhi();
+    const contacts=dayunContacts(gz,natal);
+    const x=dayunNarrative(gz,natal,contacts);
+
+    const startAge=daeunSu+(index-1)*10;
+    const endAge=startAge+9;
+    const exactStart=d.getStartYear();
+    const exactEnd=d.getEndYear();
+    const countingStart=countingYear+(index-1)*10;
+    const countingEnd=countingStart+9;
+
+    let periodText="";
+    if(convention==="exact"){
+      periodText=`정밀 교운 기준 ${exactStart}–${exactEnd}년 · 대운수로는 ${startAge}세 구간`;
+    }else if(convention==="counting"){
+      periodText=`세는나이 연도 환산 ${countingStart}–${countingEnd}년 · ${startAge}–${endAge}세 표기`;
+    }else{
+      periodText=`대운수 ${startAge}–${endAge}세 · 정밀 교운 연도 약 ${exactStart}–${exactEnd}년`;
+    }
+
+    // 현재 대운 강조는 실제 교운 연도를 기준으로 한다.
+    const current=currentYear>=exactStart && currentYear<=exactEnd;
+
+    return `<article class="dayun ${current?"current":""}">
+      <div class="dy-head">
+        <span class="dy-gz">${gz} · ${koGz(gz)}</span>
+        <span class="dy-years">${periodText}</span>
+        ${current?'<span class="current-badge">현재 대운</span>':""}
+      </div>
+      <div class="dy-theme">${x.title}</div>
+      <div class="dy-prose"><p>${x.scene}</p><p>${x.life}</p></div>
+      <div class="direction"><b>이 10년을 살아가는 방향</b><br>${x.direction}</div>
+    </article>`;
+  }).join("");
+}
+
+function finalSentence(natal){
+  const surf=surfaceElements(natal),hidden=hiddenElementCounts(natal),dayE=ELEM[natal.dayGan],res=inverseGen(dayE),out=GEN[dayE];
+  if(surf[res]>=2&&surf[out]===0&&hidden[out]>0)return `더 많이 아는 것이 다음 단계가 아니라, 이미 알고 있는 것을 세상 밖으로 꺼내는 것이 다음 단계입니다.`;
+  if(surf[res]>=2&&surf[out]===0)return `받아들이는 힘은 이미 충분합니다. 이제 삶을 바꾸는 것은 더 많은 준비가 아니라 첫 번째 출력입니다.`;
+  if(surf[out]>=2&&surf["토"]>=2)return `표현하는 힘은 이미 있습니다. 이제 중요한 것은 많이 만드는 것이 아니라 오래 남을 것을 고르는 일입니다.`;
+  if(surf["금"]>=2)return `기준을 더 높이는 것보다, 그 기준으로 무엇을 보호하고 무엇을 만들어 낼지 선택하는 것이 다음 단계입니다.`;
+  return `이 사주의 다음 단계는 없는 것을 억지로 채우는 데 있지 않고, 이미 가진 힘들을 자기 순서로 연결하는 데 있습니다.`;
+}
+
+// Override old lightweight renderers with narrative versions
+function renderTimeNote(input,made,ec){
+  if(INPUT_MODE==="manual"){
+    $("timeCorrection").innerHTML=`원국은 직접 입력한 네 기둥을 사용했습니다. 대운 시작 시점은 출생 정보 ${formatDT(made.civil)}를 기준으로 계산합니다.`; return;
+  }
+  if(made.adj){const a=made.adj;$("timeCorrection").innerHTML=`입력 시각 ${formatDT(made.civil)} → 진태양시 약 <b>${formatDT(a.adjusted)}</b> (${a.total>=0?"+":""}${a.total.toFixed(1)}분). 계산된 시주는 <b>${ec.getTime()}(${koGz(ec.getTime())})</b>입니다.`}
+  else $("timeCorrection").innerHTML=`입력한 표준시 ${formatDT(made.civil)}를 사용했습니다. 계산된 시주는 <b>${ec.getTime()}(${koGz(ec.getTime())})</b>입니다.`;
+}
+
+function analyze(){
+  $("errorBox").classList.add("hidden");
+  try{
+    if(typeof Solar==="undefined" || typeof Lunar==="undefined") throw new Error("만세력 계산 엔진을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 페이지를 새로고침해 주세요.");
+    const input=parseInput();
+    if(input.y<1961 && $("timeBasis").value==="true") throw new Error("현재 진태양시 자동 보정은 대한민국 1961년 이후 출생을 우선 지원합니다. 이전 출생은 표준시 기준을 사용하거나 전문 만세력과 교차 확인해 주세요.");
+    const made=makeSolar(input), lunar=made.solar.getLunar(), ec=lunar.getEightChar(); ec.setSect(2);
+    const natal=INPUT_MODE==="manual" ? buildManualNatal() : buildNatal(ec);
+    renderPillars(natal); renderTimeNote(input,made,ec);
+    const rel=renderRelations(natal);
+    $("landscapeReading").innerHTML=landscapeText(natal,rel);
+    $("signatureLine").textContent=signatureFor(natal);
+    renderPillarStories(natal); renderElements(natal); renderTenGods(natal); renderLife(natal,rel); renderDayun(ec,natal);
+    $("finalLine").textContent=finalSentence(natal);
+    $("results").classList.remove("hidden");
+    $("status").textContent=`해설 완성 · ${INPUT_MODE==="manual"?"직접 입력 명식":made.solar.toYmdHms()+" 기준"}`;
+    setTimeout(()=>$("results").scrollIntoView({behavior:"smooth",block:"start"}),80);
+  }catch(err){$("errorBox").textContent=err&&err.message?err.message:String(err);$("errorBox").classList.remove("hidden")}
+}
+
+document.querySelectorAll(".mode-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+  INPUT_MODE=btn.dataset.mode;
+  $("manualPanel").classList.toggle("hidden",INPUT_MODE!=="manual");
+  $("birthMetaTitle").textContent=INPUT_MODE==="manual"?"대운 계산에 사용할 출생 정보":"출생 정보";
+}));
+
+$("birthPlace").addEventListener("input",e=>{
+  const v=e.target.value.trim();
+  if(CITY_LONGITUDE[v]) $("longitude").value=CITY_LONGITUDE[v];
+});
+$("calendarType").addEventListener("change",()=>{
+  $("leapWrap").classList.toggle("hidden",$("calendarType").value!=="lunar");
+});
+$("analyzeBtn").addEventListener("click",analyze);
+$("dayunConvention").addEventListener("change",()=>{ if(!$("results").classList.contains("hidden")) analyze(); });
+
+window.addEventListener("load",()=>{
+  if(typeof Solar!=="undefined"){
+    $("status").textContent="계산 엔진 준비 완료";
+    analyze();
+  }else{
+    $("status").textContent="계산 엔진을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.";
+  }
+});
+})();
+</script>
+</body>
+</html>
